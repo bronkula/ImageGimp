@@ -11,6 +11,12 @@ function addUrl() {
 </script>
 <form onsubmit="addUrl(); return false;" style="margin:0px;padding:0px;">
 <div style="text-align:center;width:600px;">
+  <script>
+	document.write(
+		"<img src='"+chrome.extension.getURL("images/buttonlistnew.png")+"' />\n"+
+		"<img src='"+chrome.extension.getURL("images/buttonpoweron.png")+"' />\n"
+		);
+	</script>
 	<input class="panelbutton1" type="text" id="toadd" size="85" style="text-align:right;">
 	<input class="panelbutton1" type="button" value="Add" onClick="addUrl();">
 	<!--<input type="checkbox" name="reporadd" title="Replace old list">-->
