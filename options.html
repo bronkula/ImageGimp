@@ -1,0 +1,243 @@
+<html>
+<head>
+<title>ImageGimp</title>
+<style>
+.header { font-size:20px; font-weight:bold; }
+.option { width:700px; padding-left:30px; }
+.title { font-weight:bold; }
+.head { font-weight:bold; margin-left:30px; }
+.explanation { font-weight:normal; margin-left:30px; }
+.input { margin-left:30px; }
+.commands { margin-top:30px; }
+.commands table { border-collapse:collapse; margin-left:30px; width:700px; }
+.commands .head { font-weight:bold; }
+.example { font-family: lucida console, fixedsys; background:#dddddd; font-size:12px; padding:5px 15px 5px 15px; }
+.example span { color:#777777; float:right; }
+.example div { color:#777777; }
+.changelog { margin-top:30px; }
+table .title { width:100px; }
+</style>
+<script src="jquery-1.6.1.min.js"></script>
+<script>
+function loadOptions() {
+	console.log(localStorage.htmlReplace);
+	if(localStorage.htmlReplace == "true") $("#htmlReplace").attr("checked",true);
+}
+function setHtmlReplace() { 
+	val = $("#htmlReplace").is(":checked");
+	localStorage.htmlReplace = val;
+	console.log(localStorage.htmlReplace);
+}
+
+function getChangelog() {
+$.getJSON(chrome.extension.getURL("changelog.txt"),
+	function(data) {
+		$("#changebutton").remove();
+		$("#logdiv").append("<div class=\"header\">Changelog</div>");
+		$.each(data, function(i,item){
+			$cn = $("<div class=\"head\">"+item.Number+"</div>");
+			if(item.Features!=undefined) {
+				$ct = $("<div class=\"head\">New Features</div>");
+				$cl = $("<ul />");
+				$.each(item.Features, function(i,item){
+					$("<li class=\"explanation\">"+item+"</li>").appendTo($cl);
+				});
+				$cn.append($ct,$cl);
+			}
+			if(item.Changes!=undefined) {
+				$ct = $("<div class=\"head\">Changes</div>");
+				$cl = $("<ul />");
+				$.each(item.Changes, function(i,item){
+					$("<li class=\"explanation\">"+item+"</li>").appendTo($cl);
+				});
+				$cn.append($ct,$cl);
+			}
+			$("#logdiv").append($cn);
+		});
+		/* $.each(data, function(i,item){
+			$("<img/>").attr("src", item.media.m).appendTo("#images");
+			if ( i == 3 ) return false;
+		}); */
+	});
+}
+</script>
+</head>
+
+<body onload="loadOptions()">
+<div class="options">
+	<!--<div class="header">
+		OPTIONS
+	</div>
+	<div class="option">
+		<div class="title">
+			HTML Replace
+		</div>
+		<div class="input">
+			<input type="checkbox" id="htmlReplace" title="Replace old list" onchange="setHtmlReplace()"/>
+		</div>
+		<div class="explanation">
+			This option is useful on most open directories and will give a cleaner interface.
+			However If executing ImageGimp on a large website that is already using a lot of javascript, this option can cause the script to break down entirely (often evidenced by producing a blank screen and a large error in firebug) That is why this option is off by default.
+		</div>
+	</div>
+	<div class="option">
+		<div class="title">
+			Save Changes
+		</div>
+		<div class="input">
+			<button onclick="saveOptions()">Save Options</button>
+		</div>
+	</div>-->
+</div>
+
+<div class="commands">
+	<div class="header">
+		INPUT COMMANDS
+	</div>
+
+	<table>
+		<tr>
+			<td class="title" valign="top">make list</td>
+			<td valign="top"> - </td>
+			<td>
+				Make a list of all images in the DOM and show the box if it is not already showing
+				<div class="example">make</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">show box</td>
+			<td valign="top"> - </td>
+			<td>
+				Show the box
+				<div class="example">show</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">hide box</td>
+			<td valign="top"> - </td>
+			<td>
+				Hide the box
+				<div class="example">hide</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">show list</td>
+			<td valign="top"> - </td>
+			<td>
+				Show the list if it has been changed somehow (and hasn't updated for some reason)
+				<div class="example">list</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">clear list</td>
+			<td valign="top"> - </td>
+			<td>
+				Clear the current list and remove the current image
+				<div class="example">clear</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">keep</td>
+			<td valign="top"> - </td>
+			<td>
+				Keep any images containing expression
+				<div class="example">keep foo<br/>keep gif</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">remove</td>
+			<td valign="top"> - </td>
+			<td>
+				Remove any words containing expression, rem or del
+				<div class="example">rem foo<br/>del gif</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">keep head<br/>keep tail</td>
+			<td valign="top"> - </td>
+			<td>
+				Keeps a number of images from the head or tail end of the imagelist
+				<div class="example">keept 5<br/>keeph 23</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">remove head<br/>remove tail</td>
+			<td valign="top"> - </td>
+			<td>
+				Removes a number of images from the head or tail end of the imagelist, remt/remh or delt/delh
+				<div class="example">remt 5<br/>delh 23</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">replace</td>
+			<td valign="top"> - </td>
+			<td>
+				Replace one part of the url text with something else 
+				<div class="example">
+				r:regex; w:string; <div>// will replace all instances of regex with string</div><br/>
+				r:foo;w:bar; <div>// will replace all instances of foo with bar</div></div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">nodupes</td>
+			<td valign="top"> - </td>
+			<td>
+				Remove duplicate images from the list
+				<div class="example">nodupes</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">background</td>
+			<td valign="top"> - </td>
+			<td>
+				Change the background color of the image box
+				<div class="example">background white<br/>background #5522BB</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">fusker</td>
+			<td valign="top"> - </td>
+			<td>
+				Make a fusker style link list.  This can be done with letters, numbers, and leading zeros. Multiple fuskers can be used at once.
+				<div class="example">http://www.example.com/image[01-05].jpg
+				<div>// Will produce this list of images<br/>
+				http://www.example.com/image01.jpg<br/>
+				http://www.example.com/image02.jpg<br/>
+				http://www.example.com/image03.jpg<br/>
+				http://www.example.com/image04.jpg<br/>
+				http://www.example.com/image05.jpg
+				</div>
+				<br/>
+				http://www.example.com/folder[a-c]/image[1-3].jpg
+				<div>// Will produce this list of images<br/>
+				http://www.example.com/foldera/image1.jpg
+				http://www.example.com/foldera/image2.jpg
+				http://www.example.com/foldera/image3.jpg
+				http://www.example.com/folderb/image1.jpg
+				http://www.example.com/folderb/image2.jpg
+				http://www.example.com/folderb/image3.jpg
+				http://www.example.com/folderc/image1.jpg
+				http://www.example.com/folderc/image2.jpg
+				http://www.example.com/folderc/image3.jpg
+				</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">single url</td>
+			<td valign="top"> - </td>
+			<td>
+				Add any one url to the list
+				<div class="example">http://www.example.com/image.jpg</div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div class="changelog">
+	<button onclick="getChangelog()" id="changebutton">Show Changelog</button>
+	<div id="logdiv"></div>
+</div>
+
+</body>
+</html>

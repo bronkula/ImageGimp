@@ -1,0 +1,19 @@
+<html>
+<script src="jquery-1.6.1.min.js"></script>
+<script>
+function addUrl() {
+	$val = $("#toadd").val();
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.extension.getBackgroundPage().console.log(tab.id,$val);
+		chrome.tabs.sendRequest(tab.id, {add:$val}, function(response){});
+	});
+}
+</script>
+<form onsubmit="addUrl(); return false;" style="margin:0px;padding:0px;">
+<div style="text-align:center;width:600px;">
+	<input class="panelbutton1" type="text" id="toadd" size="85" style="text-align:right;">
+	<input class="panelbutton1" type="button" value="Add" onClick="addUrl();">
+	<!--<input type="checkbox" name="reporadd" title="Replace old list">-->
+</div>
+</form>
+</html>

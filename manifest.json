@@ -1,0 +1,27 @@
+{
+	"name": "ImageGimp",
+	"version": "1.0.4",
+	"description": "Grab Images from any webpage. See Options for detailed instructions.",
+	"background_page" : "background.html",
+	"options_page" : "options.html",
+	"browser_action": {
+		"default_icon":"icon_19.png",
+		"default_title": "ImageGimp",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"tabs",
+		"http://*/*",
+		"https://*/*"
+	],
+	"content_scripts": [{
+		"matches":["http://*/*","https://*/*"],
+		"js": ["gimp.js","jquery-1.6.1.min.js","jquery-ui-1.8.14.custom.min.js"]
+	}],
+	"icons": {
+		"16": "icon_16.png",
+		"19": "icon_19.png",
+		"48": "icon_48.png",
+		"128": "icon_128.png"
+	}
+}
