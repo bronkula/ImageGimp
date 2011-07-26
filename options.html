@@ -17,7 +17,7 @@
 .changelog { margin-top:30px; }
 table .title { width:100px; }
 </style>
-<script src="jquery-1.6.1.min.js"></script>
+<script src="jquery-full.js"></script>
 <script>
 function loadOptions() {
 	console.log(localStorage.htmlReplace);
@@ -27,6 +27,11 @@ function setHtmlReplace() {
 	val = $("#htmlReplace").is(":checked");
 	localStorage.htmlReplace = val;
 	console.log(localStorage.htmlReplace);
+}
+function setChecked(str) { 
+	val = $("#"+str).is(":checked");
+	localStorage[str] = val;
+	console.log(localStorage[str]);
 }
 
 function getChangelog() {
@@ -65,10 +70,23 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 
 <body onload="loadOptions()">
 <div class="options">
-	<!--<div class="header">
+	<div class="header">
 		OPTIONS
 	</div>
 	<div class="option">
+		<div class="title">
+			Add Timestamp
+		</div>
+		<div class="input">
+			<input type="checkbox" id="addDate" title="Replace old list" onchange="setChecked('addDate')"/>
+		</div>
+		<div class="explanation">
+			This option, which is off by default, allows you to add a timestamp to the end of any image url.  This causes the system to load a fresh resource, and not draw from the cache.  This option can cause you to alway load a fresh image, but can break on sites like blogger, which restrict access to images.
+			<br/><br/>
+			You will need to reload any pages for this effect to take place.
+		</div>
+	</div>
+	<!-- <div class="option">
 		<div class="title">
 			HTML Replace
 		</div>
@@ -79,7 +97,7 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 			This option is useful on most open directories and will give a cleaner interface.
 			However If executing ImageGimp on a large website that is already using a lot of javascript, this option can cause the script to break down entirely (often evidenced by producing a blank screen and a large error in firebug) That is why this option is off by default.
 		</div>
-	</div>
+	</div> -->
 	<div class="option">
 		<div class="title">
 			Save Changes
@@ -87,7 +105,7 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 		<div class="input">
 			<button onclick="saveOptions()">Save Options</button>
 		</div>
-	</div>-->
+	</div>
 </div>
 
 <div class="commands">

@@ -7,10 +7,10 @@ var IG = {
 	isFullSize : false,	// Images should be set to full size when opening
 	
 	localStorage : {},
-	LSarray : [],
+	LSarray : ["addDate"],
 	
 	widths : [
-		300,	// width of the side panel
+		250,	// width of the side panel
 		10,		// general padding width
 		26,		// length of link strings
 		12,		// font-size
@@ -24,7 +24,7 @@ var IG = {
 	matches : [],
 	tempArray : [],
 	ratios : [],
-	
+		
 	// lowercase and uppercase alphabets from 
 	ll : "abcdefghijklmnopqrstuvwxyz",
 	lu : "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -37,9 +37,13 @@ var IG = {
 	},
 	
 	base64Im : {
-		loading : chrome.extension.getURL("images/loading.gif"),
-		failed : chrome.extension.getURL("images/failed.png"),
-		loading64 : "data:image/gif;base64,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",
+		loading			: chrome.extension.getURL("images/loading.gif"),
+		failed			: chrome.extension.getURL("images/failed.png"),
+		arrowleft		: chrome.extension.getURL("images/arrowleft.png"),
+		arrowright	: chrome.extension.getURL("images/arrowright.png"),
+		arrowup			: chrome.extension.getURL("images/arrowup.png"),
+		arrowdown		: chrome.extension.getURL("images/arrowdown.png"),
+		loading64		: "data:image/gif;base64,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",
 		background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
 	},
 	
@@ -56,17 +60,30 @@ var IG = {
 		
 		// CSS
 		$("html").append("<style id='gimpCSS' type='text/css'>"+
+		'#gimpNHTML { display:none; }\n'+
+		
 		'#gimpListBox { position:fixed; top:0px; left:0px; z-index:9999999; width: '+IG.widths[0]+'px; height:0px; background:#111111; overflow:hidden; font-family: verdana, arial; }\n'+
 		'#gimpListBoxInner { position:relative; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; margin:'+IG.widths[1]+'px; color:#ffffff; overflow:auto; font-size:'+IG.widths[3]+'px; }\n'+
+		
+		'.listAnchors { cursor:pointer; padding:1px; color:#ffffff; font:normal '+IG.widths[3]+'px/14px verdana, arial !important; text-align:left !important; }\n'+
+		'.listAnchors:hover { background:#333333; }\n'+
+		
 		'#gimpImageBox { position:fixed; top:0px; left:'+IG.widths[0]+'px; z-index:9999998; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; overflow:hidden; font-size:'+IG.widths[3]+'px; font-family: verdana, arial; }\n'+
 		'#gimpImageBoxInner { position:relative; height:100%; width:100%; text-align:center; }\n'+
 		'#gimpImageBoxImage { position:absolute; top:0px; right:0px; bottom:0px; left:0px; margin:auto; }\n'+
+		'.gimpImageBoxImageF { position:absolute; top:0px; right:0px; margin:0px !important; }\n'+
 		'#gimpImageBoxLoading { position:absolute; visibility:hidden; }\n'+
 		'#gimpImageBoxTitle { position:absolute; bottom:20px; width:100%; text-align:center; height:14px; background-image:url('+IG.base64Im.background+'); padding:5px 0px 5px 0px; }\n'+
-		'#gimpImageBoxTitleA { font-size:'+IG.widths[3]+'px !important; color:white !important; font-weight:normal !important; text-decoration:none !important; }\n'+		
-		'#gimpNHTML { display:none; }\n'+
-		'.listAnchors { cursor:pointer; padding:1px; color:#ffffff; font-size:'+IG.widths[3]+'px; }\n'+
-		'.listAnchors:hover { background:#333333; }\n'+
+		'#gimpImageBoxTitleA { font:normal '+IG.widths[3]+'px/14px verdana, arial !important; color:white !important; text-decoration:none !important; }\n'+	
+		
+		'#gimpImageBoxArrowL { width:50px; height:100%; position:absolute; left:0px; }'+
+		'#gimpImageBoxArrowR { width:50px; height:100%; position:absolute; right:0px; }'+
+		'#gimpImageBoxArrowU { height:50px; width:100%; position:absolute; top:0px; }'+
+		'#gimpImageBoxArrowL:hover .arrowinner { visibility:visible; }'+
+		'#gimpImageBoxArrowR:hover .arrowinner { visibility:visible; }'+
+		'#gimpImageBoxArrowU:hover .arrowinner { visibility:visible; }'+
+		'.arrowBut { position:absolute; top:0px; right:0px; bottom:0px; left:0px; margin:auto; cursor:pointer; }'+
+		'.arrowInner { visibility:hidden; width:100%; height:100%; background-image:url('+IG.base64Im.background+'); }'+
 		"</style>");
 
 		$("body").append(
@@ -74,8 +91,29 @@ var IG = {
 				$("<div id='gimpListBox' />").append( 
 					$("<div id='gimpListBoxInner' />") 
 				),
+				
 				$("<div id='gimpImageBox' />").append(
 					$("<div id='gimpImageBoxInner' />").append(
+						$("<div id='gimpImageBoxArrowL' />")
+							.click(function(){IG.setImagePrev();})
+							.append($("<div class='arrowInner' />").append("<img class='arrowBut' src='"+IG.base64Im.arrowleft+"' />")),
+							
+						$("<div id='gimpImageBoxArrowR' />")
+							.click(function(){IG.setImageNext();})
+							.append($("<div class='arrowInner' />").append("<img class='arrowBut' src='"+IG.base64Im.arrowright+"' />")),
+							
+						$("<div id='gimpImageBoxArrowU' />")
+							.click(function(){
+								if($("#gimpImageBoxArrowU img").attr("src")==IG.base64Im.arrowup){
+									$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowdown);
+									IG.setImageUp();
+								} else {
+									$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowup);
+									IG.setImageDown();
+								}
+							})
+							.append($("<div class='arrowInner' />").append("<img class='arrowBut' src='"+IG.base64Im.arrowup+"' />")),
+							
 						$("<div id='gimpImageBoxTitle' />")
 					)
 				)
@@ -96,15 +134,17 @@ var IG = {
 
 	writeLinkList : function() {
 		if(IG.imageLinks.length===0) return;
+		$("#gimpListBoxInner").html("");
 		$.each(IG.imageLinks, function(k,v) {
-			$div = $("<div class='listAnchors' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</div>");
-			$div.click(function(){IG.popImage(k);});
-			$("#gimpListBoxInner").append($div);
+			$("#gimpListBoxInner").append(
+				$("<div class='listAnchors' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</div>")
+				.click(function(){IG.popImage(k);})
+				);
 		}); 
 	},
 	
 	makeLinkList : function() {
-		console.log(window.location);
+		//console.log(window.location);
 
 		IG.imageLinks = [];
 		IG.I.id = false;
@@ -118,9 +158,20 @@ var IG = {
 		$("img").each(function(i){
 			str = $(this).attr("src");
 			if(str!=undefined) { 
-				IG.makeFilePath(str,"","imageLinks",IG.imageLinks.length);				
+				IG.makeFilePath(str,false,"imageLinks",IG.imageLinks.length);				
 			}
 		}); 
+		
+		docLinks = $("html").html().match(
+			RegExp('(\\(|"|\'|=)((\\w+:\/\/|)[^\\n\'?&=:">]+\\.(jpg|jpeg|jpe|gif|png|xpm|bmp|tif|tiff|art))("|\'|>|&|\\)|\\W)','ig')
+		);
+		var listlength=(docLinks==null)?0:docLinks.length;
+		for (var i=0; i<listlength; i++) {
+			filename=docLinks[i]=docLinks[i].replace(/^\(|\)$|\"|^\s*\'|\'\s*$|=|\?|>|&|\\$|^\s+|\s+$/g,'');
+			IG.makeFilePath(filename,false,"imageLinks",IG.imageLinks.length);	
+		}
+		//console.log(docLinks);
+		//console.log(IG.imageLinks);
 	},
 	
 	makeFileCheck : function(str,title,arr) {
@@ -212,8 +263,8 @@ var IG = {
 			gp : gp,					// File Path
 			gi : title,					// Link title
 			gt : gt,					// Date string
-			gw : 0,
-			gh : 0
+			gw : false,
+			gh : false
 		};
 	},
 
@@ -221,55 +272,58 @@ var IG = {
 	popImage : function(num) {
 		IG.I.id = num;
 		$("#gimpImageBoxImage").remove();
-		$("#gimpImageBoxTitle").before($("<img id='gimpImageBoxImage' />"));
+		$("#gimpImageBoxInner").prepend($("<img id='gimpImageBoxImage' />").load(
+			//function(){console.log("onload",$("#gimpImageBoxImage").width());}
+			));
 		
 		IG.setImageTitle();
 		
-		//if(IG.imageLinks[num].loaded==false) {
-		//	$("#gimpImageBoxLoading").css({"visibility":"visible","display":"block"});
-		//}
-		//$("#gimpImageBoxImage").css("visibility","visible");
-		//$("#gimpImageBoxTitle").css("visibility","hidden");
-		//$("#gimpImageBoxImage").load(IG.imageIsLoaded);
-		//$("#gimpImageBoxImage").one('error', IG.imerr);
-		
-		if(IG.imageLinks[num].gt == "base64") $("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl);
-		else $("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl+"?"+IG.imageLinks[num].gt);
+		if(IG.imageLinks[num].gt == "base64") {
+			$("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl);
+		} else {
+			$("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl
+			//+"?"+IG.imageLinks[num].gt
+			);
+		}
 
 		$.preload("#gimpImageBoxImage",{
-			onRequest:function(data){ console.log('attempting ',data.image); },
-			onFinish:function(data){ console.log(data.loaded,'loaded successfully'); IG.imageIsLoaded(); },
+			onRequest:function(data){ 
+				//console.log('attempting ',data.image); 
+				$("#gimpImageBoxImage").removeAttr("class");
+				},
+			onFinish:function(data){ 
+				//console.log(data.loaded,'loaded successfully'); 
+				IG.imageIsLoaded(); 
+				if(IG.imageLinks[IG.I.id].gw===false) {
+					//IG.imageLinks[IG.I.id].gw = $("#gimpImageBoxImage");
+					//console.log("onfinish",$("#gimpImageBoxImage").width());
+					}
+				},
+			onComplete:function(data) {
+				//console.log("oncomplete",$("#gimpImageBoxImage").width());
+				console.log(data.found);
+				},
 			placeholder:IG.base64Im.loading,
-			notFound:IG.base64Im.failed,
+			notFound:IG.base64Im.failed
 			});
 		
 		IG.imShowing = true;
-		//IG.isLoading = true;
-		var d = new Date();
-		
 	},
 	
 	// set the title div to the url of the current image
 	setImageTitle : function() {
-		if(IG.imageLinks[IG.I.id].gi=="") gt = IG.imageLinks[IG.I.id].gn;
-		else gt = IG.imageLinks[IG.I.id].gi;
+		/* if(IG.imageLinks[IG.I.id].gi===false) { gt = IG.imageLinks[IG.I.id].gn; console.log(1); }
+		else { gt = IG.imageLinks[IG.I.id].gi; console.log(2); } */
+		gt = IG.imageLinks[IG.I.id].gn+((IG.imageLinks[IG.I.id].gi==false)?"":" : "+IG.imageLinks[IG.I.id].gi);
 		
 		$("#gimpImageBoxTitle").html("<a href='"+IG.imageLinks[IG.I.id].gl+"' id='gimpImageBoxTitleA'>"+gt+"</a>");
+		//console.log(IG.imageLinks[IG.I.id]);
 	},
 	
 	// do this when image has loaded
 	imageIsLoaded : function() {
-		//IG.isLoading = false; 
 		IG.imageLinks[IG.I.id].loaded = true;
 		IG.fitImageInBox();
-		
-		//window.setTimeout(IG.positionImageInner, 10);
-
-		/* $("#gimpImageBoxImage").css({visibility:"visible",display:"none"});
-		$("#gimpImageBoxImage").fadeIn("slow");
-		$("#gimpImageBoxTitle").css({visibility:"visible",display:"none"});
-		$("#gimpImageBoxTitle").fadeIn("slow");
-		$("#gimpImageBoxLoading").fadeOut("slow"); */
 	},
 	
 	// fit the imagegimp box into the window
@@ -283,17 +337,18 @@ var IG = {
 			.width($(document).width()-IG.widths[0])
 			.height($(window).height());
 		if(IG.imShowing == true) IG.fitImageInBox();
-		//IG.positionImageLoading();
 	},
 	
 	// fit the image inside the box
 	fitImageInBox : function() {
+		//console.log(IG.imageLinks[IG.I.id]);
 		if(IG.isFullSize == true) { w = ""; h = ""; }
 		else { 
 			w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
 			h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
 		}
-		
+		if(IG.isFullSize == true) $("#gimpImageBoxImage").attr("class","gimpImageBoxImageF");
+		else $("#gimpImageBoxImage").removeAttr("class");
 		$("#gimpImageBoxImage").css({ "max-height":h, "max-width":w });
 	},
 	
@@ -316,26 +371,6 @@ var IG = {
 			else if($ih>$bh) { $("#gimpImageBoxImage").css({top:"0px",left:(($bw/2)-($iw/2))+"px"}); }
 			else { $("#gimpImageBoxImage").position({ my:"center", at:"center", of:"#gimpImageBox" }); }
 		}
-		/* $("#gimpImageBoxTitle").position({
-			my:"bottom",
-			at:"bottom",
-			offset:"0 -30",
-			of:"#gimpImageBox"
-		}); */		
-	},
-	
-	// set the position of the loading image
-	positionImageLoading : function() {
-		$("#gimpImageBoxLoading").css({
-			top:(($("#gimpImageBox").height()/2)-($("#gimpImageBoxLoading").height()/2))+"px",
-			left:(($("#gimpImageBox").width()/2)-($("#gimpImageBoxLoading").width()/2))+"px"
-		}); 
-		
-		/* $("#gimpImageBoxLoading").position({
-			my:"center",
-			at:"center",
-			of:"#gimpImageBox"
-		}); */ 
 	},
 	
 	// cut long names in half and put ellipses in the middle
@@ -349,7 +384,7 @@ var IG = {
 	
 	// set image to the next image in list
 	setImageNext : function() {
-		if(IG.I.id==IG.imageLinks.length-1) i = 0; else i = IG.I.id+1;
+		if(IG.I.id==IG.imageLinks.length-1 || IG.I.id===false) i = 0; else i = IG.I.id+1;
 		//console.log(i);
 		IG.popImage(i);
 	},
@@ -365,7 +400,7 @@ var IG = {
 	setImageUp : function() {
 		IG.isFullSize = true;
 		IG.fitImageInBox();
-		IG.positionImageInner();
+		//IG.positionImageInner();
 		$("#gimpImageBox").css("overflow","auto");
 	},
 	
@@ -373,7 +408,7 @@ var IG = {
 	setImageDown : function() {
 		IG.isFullSize = false;
 		IG.fitImageInBox();
-		IG.positionImageInner();
+		//IG.positionImageInner();
 		$("#gimpImageBox").css("overflow","hidden");
 	},
 	
@@ -394,7 +429,6 @@ var IG = {
 	// handle window resize
 	getResize : function() {
 		IG.fitBox();
-		//IG.positionImageInner();
 	},
 	
 	// clear the link list and array
@@ -405,12 +439,7 @@ var IG = {
 	
 	// clear the image from view
 	clearImage : function() {
-		$("#gimpImageBox")
-			.html("")
-			.append(
-				//$("<img id='gimpImageBoxLoading' src='"+IG.base64Im.loading+"' style='display:none;' />"), 
-				$("<div id='gimpImageBoxTitle' />")
-			);
+		$("#gimpImageBox").html("").append( $("<div id='gimpImageBoxTitle' />") );
 	},
 	
 	// upon image error, set image to the failed logo
@@ -573,7 +602,7 @@ chrome.extension.onRequest.addListener(
 		}
 		// nodupes - remove all duplicate images from the list
 		else if(/^nodupes$/.exec(url)) {
-			temp=[IG.imageLinks[0]];
+			var temp=[IG.imageLinks[0]];
 			var c;
 			for(var a=0;a<IG.imageLinks.length;a++){
 				c=0;

@@ -2,11 +2,17 @@
 	{
 	"Number":"1.0.6",
 	"Features": [
-		"New command 'load cancel' to be used when an image fails to load"
+		"New command 'load cancel' to be used when an image takes too long loading",
+		"Added right and left arrow buttons for image list traversal",
+		"Added up/down arrow to switch between fullsize and fitted image view"
 		],
 	"Changes": [
 		"Clear command now resolves to better HTML",
-		"Style element now added to HTML instead of HEAD, so that ImageGimp can be used on an opened image"
+		"Style element now added to HTML instead of HEAD, so that ImageGimp can be used on an opened image",
+		"Added support for JQuery.Preload, allowing for more accurate image loading",
+		"Switched to CSS for positioning of image",
+		"There is now an option for whether or not to use a timestamp for cache hacking purposes",
+		"Changed the look of many elements of the box"
 		]
 	},
 
