@@ -1,34 +1,58 @@
 [
 	{
+	"Number":"1.0.6",
+	"Features": [
+		"New command 'load cancel' to be used when an image fails to load"
+		],
+	"Changes": [
+		"Clear command now resolves to better HTML",
+		"Style element now added to HTML instead of HEAD, so that ImageGimp can be used on an opened image"
+		]
+	},
+
+	{
+	"Number":"1.0.5",
+	"Features": [
+		"Buttons can now be used for most commands"
+		]
+	},
+
+	{
 	"Number":"1.0.4",
-	"Features":
-		["Included the use of Jquery UI for easier positioning of elements",
-		"Included direct link to current image in a title popup below the image"],
-	"Changes":
-		["\"Show\" and \"Hide\" now use position fixed to solve the scrolling issues",
+	"Features": [
+		"Included the use of Jquery UI for easier positioning of elements",
+		"Included direct link to current image in a title popup below the image"
+		],
+	"Changes": [
+		"\"Show\" and \"Hide\" now use position fixed to solve the scrolling issues",
 		"Replace syntax has been changed from /// to r:;w:;",
-		"Changelog has been modified to JSON so that it can be shown in the Options page"]
+		"Changelog has been modified to JSON so that it can be shown in the Options page"
+		]
 	},
 
 	{
 	"Number":"1.0.3",
-	"Features":
-		["New Changelog",
-		"New Options screen, includes command list"],
-	"Changes":
-		["\"Show\" now removes the display of the original body element<br/>\"Hide\" now removes the box and returns the original body element<br/>This can be turned off in the options screen",
-		"When the up key is used, full size remains on for future images until the down key is pressed"]
+	"Features": [
+		"New Changelog",
+		"New Options screen, includes command list"
+		],
+	"Changes": [
+		"\"Show\" now removes the display of the original body element<br/>\"Hide\" now removes the box and returns the original body element<br/>This can be turned off in the options screen",
+		"When the up key is used, full size remains on for future images until the down key is pressed"
+		]
 	},
 
 	{
 	"Number":"1.0.2",
-	"Features":
-		["Added keystrokes<br/>Up will set the image to original size<br/>Down will resize the image to fit screen<br/>left will show the previous image<br/>right will show the next image"]
+	"Features": [
+		"Added keystrokes<br/>Up will set the image to original size<br/>Down will resize the image to fit screen<br/>left will show the previous image<br/>right will show the next image"
+		]
 	},
 
 	{
 	"Number":"1.0.1",
-	"Features":
-		["Initial Creation"] 
+	"Features": [
+		"Initial Creation"
+		] 
 	}
 ]

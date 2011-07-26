@@ -1,25 +1,72 @@
 <html>
-<script src="jquery-1.6.1.min.js"></script>
+<head>
+<script src="jquery.js"></script>
 <script>
-function addUrl() {
-	$val = $("#toadd").val();
+function addUrl(str) {
+	$val = typeof(str) != 'undefined' ? str : $("#toadd").val();
 	chrome.tabs.getSelected(null, function(tab) {
 		chrome.extension.getBackgroundPage().console.log(tab.id,$val);
 		chrome.tabs.sendRequest(tab.id, {add:$val}, function(response){});
 	});
 }
+
+function insertSyntax(str,send) {
+	$("#toadd").focus();
+	$("#toadd").val(str);
+	if(send) addUrl(str);
+}
+
+function getKeep() {
+	var r=confirm("To keep items press OK, to remove press Cancel");
+	if (r==true) { var kord = "keep "; }
+	else { var kord = "rem "; }
+	insertSyntax(kord);
+}
+function getKeept() {
+	var r=confirm("To keep items press OK, to remove press Cancel");
+	if (r==true) { var kord = "keep";} else { var kord = "rem"; }
+	var r=confirm("To affect items at the top of the list press OK,\nto affect items at the bottom of the list press Cancel");
+	if (r==true) { var hort = "h "; } else { var hort = "t "; }
+	insertSyntax(kord+hort);
+}
 </script>
+<style>
+.buttonimage { cursor:pointer; margin:0px; }
+</style>
+</head>
+<body onload='$("#toadd").focus()'>
 <form onsubmit="addUrl(); return false;" style="margin:0px;padding:0px;">
-<div style="text-align:center;width:600px;">
-	<script>
-	document.write(
-		"<img src='"+chrome.extension.getURL("images/buttonlistnew.png")+"' />\n"+
-		"<img src='"+chrome.extension.getURL("images/buttonpoweron.png")+"' />\n"
-		);
-	</script>
-	<input class="panelbutton1" type="text" id="toadd" size="85" style="text-align:right;">
-	<input class="panelbutton1" type="button" value="Add" onClick="addUrl();">
+<div style="text-align:center;width:515px;">
+	<div style="text-align:right;">
+		<script>
+		document.write(
+			"<img src='"+chrome.extension.getURL("images/buttoncancel.png")+
+				"' title='Cancel loading image' class='buttonimage' onclick='insertSyntax(\"loadcancel\",1)' />\n"+
+				" &nbsp;&nbsp;&nbsp; "+
+			"<img src='"+chrome.extension.getURL("images/buttonkeep.png")+
+				"' title='Keep or delete with string' class='buttonimage' onclick='getKeep()' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonkeept.png")+
+				"' title='Keep or delete the head or tail' class='buttonimage' onclick='getKeept()' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonnodupes.png")+
+				"' title='Remove duplicate items' class='buttonimage' onclick='insertSyntax(\"nodupes\",1)' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonreplace.png")+
+				"' title='Replace text with something else' class='buttonimage' onclick='insertSyntax(\"r:; w:;\")' />\n"+
+				" &nbsp;&nbsp;&nbsp; "+
+			"<img src='"+chrome.extension.getURL("images/buttonlistnew.png")+
+				"' title='Make new list' class='buttonimage' onclick='insertSyntax(\"make\",1)' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonlistclear.png")+
+				"' title='Clear list' class='buttonimage' onclick='insertSyntax(\"clear\",1)' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonpoweron.png")+
+				"' title='Show box' class='buttonimage' onclick='insertSyntax(\"show\",1)' />\n"+
+			"<img src='"+chrome.extension.getURL("images/buttonpoweroff.png")+
+				"' title='Hide box' class='buttonimage' onclick='insertSyntax(\"hide\",1)' />\n"
+			);
+		</script>
+	</div>
+	<input type="text" id="toadd" size="80" style="text-align:right;margin:0px;">
+	<!--<input type="button" value="Add" onClick="addUrl();">-->
 	<!--<input type="checkbox" name="reporadd" title="Replace old list">-->
 </div>
 </form>
+</body>
 </html>

@@ -38,6 +38,7 @@ var IG = {
 	
 	base64Im : {
 		loading : chrome.extension.getURL("images/loading.gif"),
+		failed : chrome.extension.getURL("images/failed.png"),
 		loading64 : "data:image/gif;base64,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",
 		background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
 	},
@@ -54,20 +55,18 @@ var IG = {
 		IG.isCreated = true;
 		
 		// CSS
-		$("head").append("<style id='gimpCSS' type='text/css'>"+
-		//'#gimpGrabBox { position:fixed; top:0px; left:0px; z-index:10000000; width: '+IG.widths[1]+'px; height:'+IG.widths[1]+'px; background:#555555; cursor:pointer; }\n'+
+		$("html").append("<style id='gimpCSS' type='text/css'>"+
 		'#gimpListBox { position:fixed; top:0px; left:0px; z-index:9999999; width: '+IG.widths[0]+'px; height:0px; background:#111111; overflow:hidden; font-family: verdana, arial; }\n'+
-		'#gimpListBox td { color:#999999; }'+'#gimpListBox a { color:#dddddd; text-decoration:none; }\n'+
 		'#gimpListBoxInner { position:relative; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; margin:'+IG.widths[1]+'px; color:#ffffff; overflow:auto; font-size:'+IG.widths[3]+'px; }\n'+
-		'#gimpListBoxInner a,#gimpListBoxInner td { font-size:'+IG.widths[3]+'px; }\n'+
 		'#gimpImageBox { position:fixed; top:0px; left:'+IG.widths[0]+'px; z-index:9999998; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; overflow:hidden; font-size:'+IG.widths[3]+'px; font-family: verdana, arial; }\n'+
-		'#gimpImageBoxImage { position:absolute; visibility:hidden; }\n'+
+		'#gimpImageBoxInner { position:relative; height:100%; width:100%; text-align:center; }\n'+
+		'#gimpImageBoxImage { position:absolute; top:0px; right:0px; bottom:0px; left:0px; margin:auto; }\n'+
 		'#gimpImageBoxLoading { position:absolute; visibility:hidden; }\n'+
-		'#gimpImageBoxTitle { position:fixed; display:none; background-image:url('+IG.base64Im.background+'); padding:5px 15px 5px 15px; border-radius:5px; visibility:hidden; }\n'+
-		'#gimpImageBoxTitleA { color:white !important; font-weight:normal !important; text-decoration:none !important; }\n'+		
-		'#gimpListBox a { font-size:'+IG.widths[3]+'px; }\n'+
+		'#gimpImageBoxTitle { position:absolute; bottom:20px; width:100%; text-align:center; height:14px; background-image:url('+IG.base64Im.background+'); padding:5px 0px 5px 0px; }\n'+
+		'#gimpImageBoxTitleA { font-size:'+IG.widths[3]+'px !important; color:white !important; font-weight:normal !important; text-decoration:none !important; }\n'+		
 		'#gimpNHTML { display:none; }\n'+
-		'.listAnchors { cursor:pointer; }\n'+
+		'.listAnchors { cursor:pointer; padding:1px; color:#ffffff; font-size:'+IG.widths[3]+'px; }\n'+
+		'.listAnchors:hover { background:#333333; }\n'+
 		"</style>");
 
 		$("body").append(
@@ -76,8 +75,9 @@ var IG = {
 					$("<div id='gimpListBoxInner' />") 
 				),
 				$("<div id='gimpImageBox' />").append(
-					$("<img id='gimpImageBoxLoading' src='"+IG.base64Im.loading+"' />"),
-					$("<div id='gimpImageBoxTitle' />")
+					$("<div id='gimpImageBoxInner' />").append(
+						$("<div id='gimpImageBoxTitle' />")
+					)
 				)
 			)
 		);
@@ -93,19 +93,14 @@ var IG = {
 		IG.isShowing = false;
 		$("#gimpNHTML").fadeOut("fast");
 	},
-	
+
 	writeLinkList : function() {
 		if(IG.imageLinks.length===0) return;
-		$tt = $("<table></table>");
 		$.each(IG.imageLinks, function(k,v) {
-			$tr = $("<tr></tr>");
-			$td1 = $("<td style='text-align:right;'>"+(k+1)+"</td>");
-			$td2 = $("<td style='text-align:left;'>:</td>");
-			$tda = $("<a class='listAnchors' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</a>");
-			$tda.click(function(){IG.popImage(k);});
-			$tt.append($tr.append($td1,$td2.append($tda)));
+			$div = $("<div class='listAnchors' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</div>");
+			$div.click(function(){IG.popImage(k);});
+			$("#gimpListBoxInner").append($div);
 		}); 
-		$("#gimpListBoxInner").html($tt);
 	},
 	
 	makeLinkList : function() {
@@ -155,7 +150,7 @@ var IG = {
 			/\.([^\.\/\\\?]+)$/.exec(gn);
 			var ext = RegExp.$1;
 			var gt = d.valueOf();
-			console.log("1 "+str)
+			//console.log("1 "+str)
 		}
 		// create full link from base64 data
 		else if(/^[^\/]+:/.test(str)) {
@@ -165,7 +160,7 @@ var IG = {
 				var gt = RegExp.$3; // data base type
 				var gn = dt+"/"+ext+";"+gt;
 				var gp = false;
-				console.log("2.1 "+str)
+				//console.log("2.1 "+str)
 			}
 			else {
 				if(/^chrome/.exec(str)) return;
@@ -173,7 +168,7 @@ var IG = {
 				var gt = ""; 
 				var gn = "Other Data Type";
 				var gp = false;
-				console.log("2.2 "+str)
+				//console.log("2.2 "+str)
 			}
 		}
 		// create full link from virtual url
@@ -189,18 +184,18 @@ var IG = {
 				gp2[0] = gp1[0];
 				gp = gp2;
 				str = gp.join("/");
-				console.log("3.1 "+str)
+				//console.log("3.1 "+str)
 			} else if(gp2[0] == '..') {
 				gp1.pop();
 				gp2.shift();
 				gp = gp1.concat(gp2);
 				str = gp.join("/");
-				console.log("3.2 "+str)
+				//console.log("3.2 "+str)
 			} else {
 				if(gp2[0]=='.') gp2.shift();
 				gp = gp1.concat(gp2);
 				str = gp.join("/");	
-				console.log("3.3 "+str)
+				//console.log("3.3 "+str)
 			}
 			
 			var gn = gp.pop();
@@ -224,28 +219,34 @@ var IG = {
 
 	// load image and resize to fit the box
 	popImage : function(num) {
-		// end function and don't do anything if an image is already loading
-		if(IG.isLoading == true) return;
-		
 		IG.I.id = num;
 		$("#gimpImageBoxImage").remove();
-		$("#gimpImageBoxTitle").before($("<img id='gimpImageBoxImage'/>"));
+		$("#gimpImageBoxTitle").before($("<img id='gimpImageBoxImage' />"));
 		
-		IG.positionImageLoading();
 		IG.setImageTitle();
-		if(IG.imageLinks[num].loaded==false) {
-			$("#gimpImageBoxLoading").css({"visibility":"visible","display":"block"});
-		}
-		$("#gimpImageBoxImage").css("visibility","hidden");
-		$("#gimpImageBoxTitle").css("visibility","hidden");
-		$("#gimpImageBoxImage").load(IG.imageIsLoaded);
 		
-		IG.imShowing = true;
-		IG.isLoading = true;
-		var d = new Date();
+		//if(IG.imageLinks[num].loaded==false) {
+		//	$("#gimpImageBoxLoading").css({"visibility":"visible","display":"block"});
+		//}
+		//$("#gimpImageBoxImage").css("visibility","visible");
+		//$("#gimpImageBoxTitle").css("visibility","hidden");
+		//$("#gimpImageBoxImage").load(IG.imageIsLoaded);
+		//$("#gimpImageBoxImage").one('error', IG.imerr);
 		
 		if(IG.imageLinks[num].gt == "base64") $("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl);
 		else $("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl+"?"+IG.imageLinks[num].gt);
+
+		$.preload("#gimpImageBoxImage",{
+			onRequest:function(data){ console.log('attempting ',data.image); },
+			onFinish:function(data){ console.log(data.loaded,'loaded successfully'); IG.imageIsLoaded(); },
+			placeholder:IG.base64Im.loading,
+			notFound:IG.base64Im.failed,
+			});
+		
+		IG.imShowing = true;
+		//IG.isLoading = true;
+		var d = new Date();
+		
 	},
 	
 	// set the title div to the url of the current image
@@ -258,17 +259,17 @@ var IG = {
 	
 	// do this when image has loaded
 	imageIsLoaded : function() {
-		IG.isLoading = false; 
+		//IG.isLoading = false; 
 		IG.imageLinks[IG.I.id].loaded = true;
 		IG.fitImageInBox();
 		
-		window.setTimeout(IG.positionImageInner, 10);
+		//window.setTimeout(IG.positionImageInner, 10);
 
-		$("#gimpImageBoxImage").css({visibility:"visible",display:"none"});
+		/* $("#gimpImageBoxImage").css({visibility:"visible",display:"none"});
 		$("#gimpImageBoxImage").fadeIn("slow");
 		$("#gimpImageBoxTitle").css({visibility:"visible",display:"none"});
 		$("#gimpImageBoxTitle").fadeIn("slow");
-		$("#gimpImageBoxLoading").fadeOut("slow");
+		$("#gimpImageBoxLoading").fadeOut("slow"); */
 	},
 	
 	// fit the imagegimp box into the window
@@ -282,7 +283,7 @@ var IG = {
 			.width($(document).width()-IG.widths[0])
 			.height($(window).height());
 		if(IG.imShowing == true) IG.fitImageInBox();
-		IG.positionImageLoading();
+		//IG.positionImageLoading();
 	},
 	
 	// fit the image inside the box
@@ -315,12 +316,12 @@ var IG = {
 			else if($ih>$bh) { $("#gimpImageBoxImage").css({top:"0px",left:(($bw/2)-($iw/2))+"px"}); }
 			else { $("#gimpImageBoxImage").position({ my:"center", at:"center", of:"#gimpImageBox" }); }
 		}
-		$("#gimpImageBoxTitle").position({
+		/* $("#gimpImageBoxTitle").position({
 			my:"bottom",
 			at:"bottom",
 			offset:"0 -30",
 			of:"#gimpImageBox"
-		});		
+		}); */		
 	},
 	
 	// set the position of the loading image
@@ -393,7 +394,7 @@ var IG = {
 	// handle window resize
 	getResize : function() {
 		IG.fitBox();
-		IG.positionImageInner();
+		//IG.positionImageInner();
 	},
 	
 	// clear the link list and array
@@ -404,7 +405,18 @@ var IG = {
 	
 	// clear the image from view
 	clearImage : function() {
-		$("#gimpImageBox").html("");
+		$("#gimpImageBox")
+			.html("")
+			.append(
+				//$("<img id='gimpImageBoxLoading' src='"+IG.base64Im.loading+"' style='display:none;' />"), 
+				$("<div id='gimpImageBoxTitle' />")
+			);
+	},
+	
+	// upon image error, set image to the failed logo
+	imerr : function() {
+		IG.isLoading = false;
+		$("#gimpImageBoxInner").attr(chrome.extension.getURL("images/failed2.gif"));
 	},
 	
 	// fusker parser
@@ -511,6 +523,11 @@ chrome.extension.onRequest.addListener(
 		// clear - clear image list and current image
 		else if(url == "clear") {
 			IG.clearList();
+			IG.clearImage();
+			IG.isLoading = false;
+		} 
+		// loadcancel - cancel loading image
+		else if(url == "loadcancel") {
 			IG.clearImage();
 			IG.isLoading = false;
 		} 

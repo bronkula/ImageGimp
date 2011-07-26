@@ -1,6 +1,6 @@
 {
 	"name": "ImageGimp",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Grab Images from any webpage. See Options for detailed instructions.",
 	"background_page" : "background.html",
 	"options_page" : "options.html",
@@ -16,7 +16,7 @@
 	],
 	"content_scripts": [{
 		"matches":["http://*/*","https://*/*"],
-		"js": ["gimp.js","jquery-1.6.1.min.js","jquery-ui-1.8.14.custom.min.js"]
+		"js": ["gimp.js","jquery-full.js"]
 	}],
 	"icons": {
 		"16": "icon_16.png",
