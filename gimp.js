@@ -10,7 +10,7 @@ var IG = {
 	LSarray : ["addDate"],
 	
 	widths : [
-		250,	// width of the side panel
+		275,	// width of the side panel
 		10,		// general padding width
 		26,		// length of link strings
 		12,		// font-size
@@ -79,9 +79,9 @@ var IG = {
 		'#gimpImageBoxArrowL { width:50px; height:100%; position:absolute; left:0px; }'+
 		'#gimpImageBoxArrowR { width:50px; height:100%; position:absolute; right:0px; }'+
 		'#gimpImageBoxArrowU { height:50px; width:100%; position:absolute; top:0px; }'+
-		'#gimpImageBoxArrowL:hover .arrowinner { visibility:visible; }'+
-		'#gimpImageBoxArrowR:hover .arrowinner { visibility:visible; }'+
-		'#gimpImageBoxArrowU:hover .arrowinner { visibility:visible; }'+
+		'#gimpImageBoxArrowL:hover .arrowInner { visibility:visible; }'+
+		'#gimpImageBoxArrowR:hover .arrowInner { visibility:visible; }'+
+		'#gimpImageBoxArrowU:hover .arrowInner { visibility:visible; }'+
 		'.arrowBut { position:absolute; top:0px; right:0px; bottom:0px; left:0px; margin:auto; cursor:pointer; }'+
 		'.arrowInner { visibility:hidden; width:100%; height:100%; background-image:url('+IG.base64Im.background+'); }'+
 		"</style>");
@@ -105,10 +105,8 @@ var IG = {
 						$("<div id='gimpImageBoxArrowU' />")
 							.click(function(){
 								if($("#gimpImageBoxArrowU img").attr("src")==IG.base64Im.arrowup){
-									$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowdown);
 									IG.setImageUp();
 								} else {
-									$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowup);
 									IG.setImageDown();
 								}
 							})
@@ -136,6 +134,7 @@ var IG = {
 		if(IG.imageLinks.length===0) return;
 		$("#gimpListBoxInner").html("");
 		$.each(IG.imageLinks, function(k,v) {
+			//console.log(v);
 			$("#gimpListBoxInner").append(
 				$("<div class='listAnchors' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</div>")
 				.click(function(){IG.popImage(k);})
@@ -150,7 +149,7 @@ var IG = {
 		IG.I.id = false;
 		$("a").each(function(i){
 			str = $(this).attr("href");
-			if(str!=undefined) { 
+			if(str!=undefined && !str.match(/^(javascript:|mailto:)/)) { 
 				title = $(this).text();
 				IG.makeFileCheck(str,title,"imageLinks",IG.imageLinks.length); 
 			}
@@ -166,16 +165,23 @@ var IG = {
 			RegExp('(\\(|"|\'|=)((\\w+:\/\/|)[^\\n\'?&=:">]+\\.(jpg|jpeg|jpe|gif|png|xpm|bmp|tif|tiff|art))("|\'|>|&|\\)|\\W)','ig')
 		);
 		var listlength=(docLinks==null)?0:docLinks.length;
+		//console.log(docLinks);
 		for (var i=0; i<listlength; i++) {
-			filename=docLinks[i]=docLinks[i].replace(/^\(|\)$|\"|^\s*\'|\'\s*$|=|\?|>|&|\\$|^\s+|\s+$/g,'');
+			filename=docLinks[i]=unescape(
+				docLinks[i].replace(/^\(|\)$|\"|^\s*\'|\'\s*$|=|\?|>|&|\\$|^\s+|\s+$/g,'')
+				// fix unicode colon and slash in urls
+				.replace(/\\u00253A/gi,':').replace(/\\u00252F/gi,'/')
+				);
+			
+			//console.log(filename);
 			IG.makeFilePath(filename,false,"imageLinks",IG.imageLinks.length);	
 		}
-		//console.log(docLinks);
 		//console.log(IG.imageLinks);
 	},
 	
 	makeFileCheck : function(str,title,arr) {
-		var ext = str.match(/\.([^\.\/\\\?]+)$/);
+		//console.log(arguments);
+		var ext = str.match(/\.([^\.\/\\\?\)]+)$/);
 		// if the link has what appears to be a file extension
 		if(ext != null) {						
 			var hit = IG.fileFormats[0].match(RegExp(","+ext[1]+",","i"));
@@ -190,8 +196,9 @@ var IG = {
 	makeFilePath : function(str,title,arr,pos) { 
 		var d = new Date();
 	
+		//console.log(arguments);
 		// create full link from full url
-		if(/^https?|^ftp/.test(str)) {
+		if(/^https?:|^ftp:/.test(str)) {
 			// separate link and get prefix
 			var prefix = str.match(/^(.+):\/\/([^?]+)/); 
 			var gp = prefix[2].split("/");
@@ -221,6 +228,9 @@ var IG = {
 				var gp = false;
 				//console.log("2.2 "+str)
 			}
+		}
+		else if(/^(ftp|https?)[^:]+$/.test(str)) {
+			
 		}
 		// create full link from virtual url
 		else {
@@ -277,13 +287,10 @@ var IG = {
 			));
 		
 		IG.setImageTitle();
-		
-		if(IG.imageLinks[num].gt == "base64") {
+		if(IG.imageLinks[num].gt == "base64" || IG.localStorage.addDate == undefined || IG.localStorage.addDate == "false") {
 			$("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl);
 		} else {
-			$("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl
-			//+"?"+IG.imageLinks[num].gt
-			);
+			$("#gimpImageBoxImage").attr("src",IG.imageLinks[num].gl+"?"+IG.imageLinks[num].gt);
 		}
 
 		$.preload("#gimpImageBoxImage",{
@@ -301,7 +308,7 @@ var IG = {
 				},
 			onComplete:function(data) {
 				//console.log("oncomplete",$("#gimpImageBoxImage").width());
-				console.log(data.found);
+				//console.log(num);
 				},
 			placeholder:IG.base64Im.loading,
 			notFound:IG.base64Im.failed
@@ -312,8 +319,6 @@ var IG = {
 	
 	// set the title div to the url of the current image
 	setImageTitle : function() {
-		/* if(IG.imageLinks[IG.I.id].gi===false) { gt = IG.imageLinks[IG.I.id].gn; console.log(1); }
-		else { gt = IG.imageLinks[IG.I.id].gi; console.log(2); } */
 		gt = IG.imageLinks[IG.I.id].gn+((IG.imageLinks[IG.I.id].gi==false)?"":" : "+IG.imageLinks[IG.I.id].gi);
 		
 		$("#gimpImageBoxTitle").html("<a href='"+IG.imageLinks[IG.I.id].gl+"' id='gimpImageBoxTitleA'>"+gt+"</a>");
@@ -342,13 +347,15 @@ var IG = {
 	// fit the image inside the box
 	fitImageInBox : function() {
 		//console.log(IG.imageLinks[IG.I.id]);
-		if(IG.isFullSize == true) { w = ""; h = ""; }
-		else { 
+		if(IG.isFullSize == true) { 
+			w = ""; 
+			h = ""; 
+			$("#gimpImageBoxImage").attr("class","gimpImageBoxImageF");
+		} else { 
 			w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
 			h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
+			$("#gimpImageBoxImage").removeAttr("class");
 		}
-		if(IG.isFullSize == true) $("#gimpImageBoxImage").attr("class","gimpImageBoxImageF");
-		else $("#gimpImageBoxImage").removeAttr("class");
 		$("#gimpImageBoxImage").css({ "max-height":h, "max-width":w });
 	},
 	
@@ -375,6 +382,7 @@ var IG = {
 	
 	// cut long names in half and put ellipses in the middle
 	getNameTruncated : function(str) {
+		//console.log(str)
 		if(str.length > IG.widths[2]) {
 			var str1 = str.substr(0,((IG.widths[2]/2)-1));
 			var str2 = str.substr(-((IG.widths[2]/2)-1));
@@ -399,6 +407,7 @@ var IG = {
 	// set image images to display at full size
 	setImageUp : function() {
 		IG.isFullSize = true;
+		$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowdown);
 		IG.fitImageInBox();
 		//IG.positionImageInner();
 		$("#gimpImageBox").css("overflow","auto");
@@ -407,6 +416,7 @@ var IG = {
 	// set images to display fit on the screen
 	setImageDown : function() {
 		IG.isFullSize = false;
+		$("#gimpImageBoxArrowU img").attr("src",IG.base64Im.arrowup);
 		IG.fitImageInBox();
 		//IG.positionImageInner();
 		$("#gimpImageBox").css("overflow","hidden");

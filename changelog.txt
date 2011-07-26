@@ -12,7 +12,8 @@
 		"Added support for JQuery.Preload, allowing for more accurate image loading",
 		"Switched to CSS for positioning of image",
 		"There is now an option for whether or not to use a timestamp for cache hacking purposes",
-		"Changed the look of many elements of the box"
+		"Changed the look of many elements of the box",
+		"Fixed various problems with gimping images on facebook"
 		]
 	},
 
