@@ -1,18 +1,15 @@
 var IG = {
 
-	isCreated : false,  			// gimpCSS has been instantiated
-	isShowing : false,				// ImageGimp panel is showing
-	imShowing : false,				// Image is showing inside panel
-	isLoading : false,				// Image is currently loading
-	preLoading : false,				// Image is currently loading
-	isFullSize : false,				// Images should be set to full size when opening
+	isCreated : false,  // gimpCSS has been instantiated
+	isShowing : false,	// ImageGimp panel is showing
+	imShowing : false,	// Image is showing inside panel
+	isLoading : false,	// Image is currently loading
+	isFullSize : false,	// Images should be set to full size when opening
 	jqxhr : false,
 	trigger : false,
 	dlBytes : false,
 	totalBytes : false,
 	percent : false,
-	lsBoxShowing : false,			// List Box is showing
-	imBoxShowing : false,			// Image Box is showing
 		
 	widths : [
 		275,	// width of the side panel
@@ -72,7 +69,6 @@ var IG = {
 		scroll_thumb	: chrome.extension.getURL("images/scroll_thumb.png"),
 		scroll_up	: chrome.extension.getURL("images/scroll_up.png"),
 		icon_128 : chrome.extension.getURL("icon_128.png"),
-		logo_128t : chrome.extension.getURL("images/full_logo_128t.png"),
 		background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
 	},
 	
@@ -92,26 +88,30 @@ var IG = {
 		'#gimpNHTML { display:none; }\n'+
 		
 		'#gimpListBox { position:fixed; top:0px; left:0px; z-index:9999999; width: '+IG.widths[0]+'px; height:0px; background:#222222; overflow:hidden; font-family: verdana, arial; }\n'+
-		
+
+		'form { margin-top: 0 !important; }\n'+
+
 		'#gimpListBoxHeader { height:20px; padding:'+IG.widths[1]+'px '+IG.widths[1]+'px 0px '+IG.widths[1]+'px ; }\n'+
-		'#gimpListBoxInput { border:#888888 1px solid !important; background:#000000 !important; color:#ffffff !important; font:normal 12px/14px verdana, arial !important; width:'+(IG.widths[0]-(IG.widths[1]*2))+'px !important; height:17px !important; padding:0px !important; margin:0px !important; }\n'+
+		'#gimpListBoxInput { border:#888888 1px solid !important; background:#000000 !important; color:#ffffff !important; font:normal 12px/14px verdana, arial !important; width:'+(IG.widths[0]-(IG.widths[1]*2))+'px !important; height:15px !important; padding:0px !important; margin:0px !important; }\n'+
 		
 		'#gimpListBoxContent { position:relative; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; margin:'+IG.widths[1]+'px; color:#ffffff; overflow:auto; font-size:'+IG.widths[3]+'px; }\n'+
 		'.listAnchors { cursor:pointer; padding:1px; color:#ffffff; font:normal '+IG.widths[3]+'px/14px verdana, arial !important; text-align:left !important; }\n'+
 		'.IGLA { float:right; margin:1px; height:10px; width:10px; border:#222222 1px solid; }\n'+
+		'.IGLALegend { float:left; margin:1px; height:10px; width:10px; border:#222222 1px solid; }\n'+
 		'.IGLAChosen { background:#113311 !important; }\n'+
 		'.listAnchors:hover { background:#333333; }\n'+
 
 		'#gimpListBoxFooter { height:15px; padding:0px '+IG.widths[1]+'px '+IG.widths[1]+'px '+IG.widths[1]+'px !important; font:normal 10px/12px verdana, arial !important; color:#ffffff !important; text-align:center !important; }\n'+
 				
-		'#gimpImageBox { position:fixed; top:0px; left:'+IG.widths[0]+'px; z-index:9999998; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000 url("'+IG.Ims.logo_128t+'") no-repeat center; ; overflow:hidden; font-size:'+IG.widths[3]+'px; font-family: verdana, arial; }\n'+
-		'#gimpImageBoxUnder { position:relative; overflow:auto; height:100%; width:100%; }\n'+	
-		'#gimpImageBoxDummy { position:relative; overflow:auto; height:100%; width:100%; }\n'+	
+		'#gimpImageBox { position:fixed; top:0px; left:'+IG.widths[0]+'px; z-index:9999998; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; overflow:hidden; font-size:'+IG.widths[3]+'px; font-family: verdana, arial; }\n'+
+		'#gimpImageBoxUnder { position:relative; overflow:auto; height:100%; width:100%; text-align:center; }\n'+	
+		'#gimpImageBoxDummy { position:relative; overflow:auto; height:100%; width:100%; text-align:center; }\n'+	
 		'#gimpImageBoxImage { position:absolute; top:0px; right:0px; bottom:0px; left:0px; margin:auto; }\n'+
+		'.gimpImageBoxImageF { position:absolute; top:0px; right:0px; margin:0px !important; }\n'+
 		
 		'#gimpImageBoxOver { visibility:hidden; }\n'+		
-		'#gimpImageBoxTitle { position:absolute; bottom:25px; left:0px; right:0px; margin:auto; text-align:center; }\n'+
-		'#gimpImageBoxTitleA { font:normal '+IG.widths[3]+'px/14px verdana, arial !important; color:white !important; text-decoration:none !important; min-width:150px ; max-width:500px; padding:5px 10px 5px 10px !important; border-radius:10px !important; background-image:url('+IG.Ims.background+'); }\n'+			
+		'#gimpImageBoxTitle { position:absolute; bottom:25px; left:0px; right:0px; margin-right:auto; margin-left:auto;}\n'+
+		'#gimpImageBoxTitleA { font:normal '+IG.widths[3]+'px/14px verdana, arial !important; color:white !important; text-decoration:none !important; min-width:150px ; max-width:500px; padding:5px 10px 5px 10px !important; border-radius:10px !important; background-image:url('+IG.Ims.background+'); }\n'+	
 		
 		'#gimpImageBoxArrows { height:60px; width:160px; bottom:44px; left:0px; right:0px; margin-right:auto; margin-left:auto; position:absolute; }\n'+
 		'#gimpImageBoxArrows:hover .arrowInner { visibility:visible; }\n'+
@@ -119,11 +119,25 @@ var IG = {
 		'.arrowBut { cursor:pointer; }\n'+
 		'.arrowInner { height:50px; width:150px; padding:5px; border-radius:10px; visibility:hidden; background-image:url('+IG.Ims.background+'); }\n'+
 		"</style>");
+		var b = {"border-color":"#000000 !important","background-color":IG.linkFindTypes[0].cssVal};
+      var legend=$("<div id='IGLALegend'/>");
+		for (var i=0; i<IG.linkFindTypes.length-1; i++) {
+      b = {"border-color":"#000000 !important","background-color":IG.linkFindTypes[i].cssVal};
+      legend.append($("<div title='"+IG.linkFindTypes[i].name+"' id='"+i+"'class='IGLALegend' '/>").css(b).click(function(){IG.listType(this.id)}));
 
+		}
 		$("body").append(
 			$("<div id='gimpNHTML' />").append(
 				$("<div id='gimpListBox' />").append( 
-					$("<div id='gimpListBoxHeader' />").append($("<input type='text' id='gimpListBoxInput' />")),
+					$("<div id='gimpListBoxHeader' />")
+						.append("<form id='gimpListBoxForm'><input type='text' id='gimpListBoxInput' /></form>"+
+						         "").append(legend),
+                  //$("<form />").append(
+							//$("<input type='text' id='gimpListBoxInput' size='36'></input>")
+							/* .attr({"readonly":false,"disabled":false})
+							.keyup(function(e){ e.preventDefault(); IG.addUrl(e); }) */
+						//)
+					//),
 					$("<div id='gimpListBoxContent' />"), 
 					$("<div id='gimpListBoxFooter' />")
 				),
@@ -150,44 +164,65 @@ var IG = {
 						)
 					)
 				)
-			)
+  	)
 		);
-		
-		IG.clearImage();
+	var submitform = document.getElementById('gimpListBoxForm');
+
+   submitform.addEventListener('submit', function(e)
+   {
+      var val = $("#gimpListBoxInput").val();
+		if(val == "") $("#gimpListBoxFooter").text("Input empty")
+		else {
+		$("#gimpListBoxFooter").text($("#gimpListBoxInput").val());
+      IG.getCMD(val);
+		};
+    e.preventDefault();
+    return false;
+   }, false);
+
+   $('#gimpListBoxInput').focus(function() {
+      usenavkeys=false;
+   });
+   $('#gimpListBoxInput').focusout(function() {
+      usenavkeys=true;
+   });
+
+   usenavkeys=true;
+	IG.clearImage();
 	},
-	
+
+	listType : function(type) {
+			var temp=[];
+			for(var a=0;a<IG.gimpLinks.length;a++){
+				if(IG.gimpLinks[a].gft==type) temp.push(IG.gimpLinks[a]);
+			}
+			if(IG.gimpLinks.length!=temp.length) {
+				console.log((temp.length)+' links found');
+				IG.gimpLinks=temp;
+				IG.writeLinkList();
+			} else { console.log('No links found'); }
+	},
 	showListBox : function() {
-		if(IG.isShowing == false) {
-			window.addEventListener("resize", IG.getResize, false);
-			window.addEventListener("keydown", IG.getKeypress, false);
-			IG.isShowing = true;
-			$otherhtml = $("body").children().not("#gimpNHTML");
-			$otherhtml.each(function(index){ 
-				if($(this).css("display")!='none') { $(this).css("display","none"); $(this).data('doremove',true); } 
-				else $(this).data('doremove',false);
-			});
-			IG.fitBox();
-			$("#gimpNHTML").fadeIn("fast");		
-		}
+		IG.isShowing = true;
+		$otherhtml = $("body").children().not("#gimpNHTML");
+		$otherhtml.each(function(index){ $(this).css("display","none"); });
+		IG.fitBox();
+		$("#gimpNHTML").fadeIn("fast");		
 	},
 	
 	hideListBox : function() {
-		if(IG.isShowing == true) {
-			window.removeEventListener("resize", IG.getResize, false);
-			window.removeEventListener("keydown", IG.getKeypress, false);
-			IG.isShowing = false;
-			$otherhtml = $("body").children().not("#gimpNHTML");
-			$otherhtml.each(function(index){ if($(this).data('doremove')==true) $(this).css("display",""); });
-			$("#gimpNHTML").fadeOut("fast");
-		}
+		IG.isShowing = false;
+		$otherhtml = $("body").children().not("#gimpNHTML");
+		$otherhtml.each(function(index){ $(this).css("display",""); });
+		$("#gimpNHTML").fadeOut("fast");
 	},
 
-	writeLinkList : function(d) {
-		if(d==undefined) d = IG.gimpLinks;
-		if(d.length==0) return;
-
+	writeLinkList : function() {
+		if(IG.gimpLinks.length===0) return;
 		$("#gimpListBoxContent").html("");
-		$.each(d, function(k,v) {
+		$.each(IG.gimpLinks, function(k,v) {
+			//console.log(v);
+			//if(v.
 			if(v.loaded==undefined || v.loaded==true) var b = {"border-color":IG.getIGLABorder(v.gsv),"background-color":IG.linkFindTypes[v.gft].cssVal};
 			else var b = {"border-color":"#FF0000","background-color":"#000000"};
 			$("#gimpListBoxContent").append(
@@ -198,47 +233,11 @@ var IG = {
 		}); 
 	},
 	
-	writeImgList : function(d) {
-		if(d==undefined) d = IG.gimpLinks;
-		if(d.length==0) return;
+	makeLinkList : function() {
+		//console.log(window.location);
 
-		IG.hideArrows();
-		$("#gimpImageBoxDummy").empty();
-		$.each(d,function(k,v) {
-			$("#gimpImageBoxDummy").append($("<img src='"+v.gl+"' />").click(function(){IG.popImage(v.oid);}));
-		});
-	},
-	
-	grabLinkList : function(d) {
-		var temp = [];
-		if(!IG.tempArray.length) { return; }
-		if(d.type=='num') {
-			for(var a=d.start;a<=d.end;a++) { 
-				IG.tempArray[a].oid=(IG.tempArray[a].oid==undefined)?a:IG.tempArray[a].oid; 
-				temp.push(IG.tempArray[a]); 
-			}
-		} 
-		else if(d.type=='str') {
-			$.each(IG.tempArray,function(k,v) {
-				if(RegExp(d.str).exec(v.gl)) { 
-					v.oid=(v.oid==undefined)?k:v.oid; 
-					temp.push(v); 
-				}
-			});
-		}
-		else if(d.type=='size') {
-			$.each(IG.tempArray,function(k,v) {
-				if(v.gst!==false && v.gst==d.size) { 
-					v.oid=(v.oid==undefined)?k:v.oid; 
-					temp.push(v); 
-				}
-			});
-			if(temp.length==0) IG.gLog("Try preloading all images");
-		}
-		IG.tempArray=temp;
-	},
-	
-	makeListFromLinks : function() {
+		IG.gimpLinks = [];
+		IG.I.id = false;
 		$("a").each(function(i){
 			str = $(this).attr("href");
 			if(str!=undefined && !str.match(/^(javascript:|mailto:)/)) { 
@@ -246,32 +245,35 @@ var IG = {
 				IG.makeFileCheck(unescape(str),title,"gimpLinks",0); 
 			}
 		}); 
-	},
-	
-	makeListFromImages : function() {
+		
+		//console.log($("a"),IG.gimpLinks);
+		
 		$("img").each(function(i){
 			str = $(this).attr("src");
 			if(str!=undefined) { 
 				IG.makeFilePath(unescape(str),false,"gimpLinks",IG.gimpLinks.length,1);				
 			}
 		}); 
-	},
-	
-	makeListFromHtml : function() {
+		
 		docLinks = $("html").html().match(
 			RegExp('(\\(|"|\'|=)((\\w+:\/\/|)[^\\n\'?&=:">]+\\.(jpg|jpeg|jpe|gif|png|xpm|bmp|tif|tiff|art))("|\'|>|&|\\)|\\W)','ig')
 		);
 		var listlength=(docLinks==null)?0:docLinks.length;
+		//console.log(docLinks);
 		for (var i=0; i<listlength; i++) {
 			filename=docLinks[i]=unescape(
 				docLinks[i].replace(/^\(|\)$|\"|^\s*\'|\'\s*$|=|\?|>|&|\\$|^\s+|\s+$/g,'')
 				// fix unicode colon and slash in urls
 				.replace(/\\u00253A/gi,':').replace(/\\u00252F/gi,'/')
 				);
+			
+			//console.log(filename);
 			IG.makeFilePath(filename,false,"gimpLinks",IG.gimpLinks.length,2);	
 		}
+		IG.noDupes();
+		//console.log(IG.gimpLinks);
 	},
-
+	
 	makeFileCheck : function(str,title,arr,type) {
 		//console.log(arguments);
 		var ext = str.match(/\.([^\.\/\\\?\)]+)$/);
@@ -368,7 +370,6 @@ var IG = {
 			gft : type,				// Type of entry 0 link, 1 image, 2 html, 3 fusker, 4 insert, 5 replace
 			gsv : false,			// Size of image in pixels
 			gst : false,			// CSS style type based on size
-			// loaded 					 This starts undefined
 			gw : false,
 			gh : false
 		};
@@ -377,11 +378,9 @@ var IG = {
 	// load image and resize to fit the box
 	popImage : function(num) {
 		if(IG.isLoading!==false) return false;
-		if(IG.preLoading!==false && IG.gimpLinks[num].loaded==undefined) return false;
 		IG.I.pre = IG.I.id;
 		IG.I.id = num;
-		IG.showArrows();
-		$("#gimpImageBoxDummy").empty();
+		$("#gimpImageBoxImage").remove();
 		$("#gimpImageBoxOver").css("visibility","visible");
 		$("#gimpImageBoxDummy").prepend($("<img id='gimpImageBoxImage' />"));
 		
@@ -394,10 +393,12 @@ var IG = {
 
 		$.preload("#gimpImageBoxImage",{
 			onRequest:function(data){ 
+				//console.log('attempting ',data.image); 
 				IG.isLoading = true;
 				$("#gimpImageBoxImage").removeAttr("class");
 			},
 			onFinish:function(data){ 
+				//console.log(data);
 			},
 			onComplete:function(data) {
 				IG.isLoading = false;
@@ -419,7 +420,7 @@ var IG = {
 		
 		IG.imShowing = true;
 	},
-	
+
 	// set the title div to the url of the current image
 	setImageTitle : function() {
 		gt = IG.gimpLinks[IG.I.id].gn+((IG.gimpLinks[IG.I.id].gi==false || IG.gimpLinks[IG.I.id].gn==IG.gimpLinks[IG.I.id].gi)?"":" : "+IG.gimpLinks[IG.I.id].gi);
@@ -430,16 +431,12 @@ var IG = {
 	
 	// get the size type css information
 	getIGLABorder : function(num) {
-		if(num===false) return "#000000 !important";
-		else return IG.linkSizeTypes[num].cssVal;
-	},
-	
-	getGST : function(num) {
-		var b = false;
+		var css = "#000000 !important";
+		if(num===false) return css;
 		$.each(IG.linkSizeTypes, function(k,v) {
-			if(num>=v.minVal && num<=v.maxVal) { b = k; return false; }
+			if(num>=v.minVal && num<=v.maxVal) { css = v.cssVal; }
 		});
-		return b;
+		return css;
 	},
 	
 	// do this when image has loaded
@@ -457,9 +454,10 @@ var IG = {
 			o.gw = data.element.naturalWidth;
 			o.gh = data.element.naturalHeight;
 			o.gsv = o.gw*o.gh;
-			o.gst = IG.getGST(o.gsv);
-			$("#IGLA"+index+" div").css("border-color",IG.getIGLABorder(o.gst));
+			//o.gst = IG.getSizeTypeStyle(o.gsv);
+			$("#IGLA"+index+" div").css("border-color",IG.getIGLABorder(o.gsv));
 		} else if(!data.found) {
+			//console.log(o);
 			o.loaded = false;
 			$("#IGLA"+index+" div").css({"border-color":"#FF0000 !important","background-color":"#000000 !important"});
 		}
@@ -485,14 +483,15 @@ var IG = {
 	
 	// fit the image inside the box
 	fitImageInBox : function() {
+		//console.log(IG.gimpLinks[IG.I.id]);
 		var w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
 		var h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
 		var o = IG.gimpLinks[IG.I.id];
 		if(IG.isFullSize == true) { 
-			if(o.gw>w && o.gh<h) { $("#gimpImageBoxImage").css({margin:"auto auto auto 0px"}); }
-			else if(o.gw<w && o.gh>h) { $("#gimpImageBoxImage").css({margin:"0px auto auto auto"}); }
-			else if(o.gw>w && o.gh>h) { $("#gimpImageBoxImage").css({margin:"0px 0px 0px 0px"}); }
-			else if(o.gw<w && o.gh<h) { $("#gimpImageBoxImage").css({margin:"auto"}); }
+			if(o.gw>w && o.gh<h) { console.log(1); $("#gimpImageBoxImage").css({margin:"auto auto auto 0px"}); }
+			else if(o.gw<w && o.gh>h) { console.log(2); $("#gimpImageBoxImage").css({margin:"0px auto auto auto"}); }
+			else if(o.gw>w && o.gh>h) { console.log(3); $("#gimpImageBoxImage").css({margin:"0px 0px 0px 0px"}); }
+			else if(o.gw<w && o.gh<h) { console.log(4); $("#gimpImageBoxImage").css({margin:"auto"}); }
 			w = h = "";
 		} else { 
 			w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
@@ -563,6 +562,25 @@ var IG = {
 		//IG.positionImageInner();
 	},
 	
+	// handle keypresses
+	getKeypress : function(e) {
+	  var stop=false;
+	  if (usenavkeys) {
+     switch(e.keyCode) {
+			case 37: IG.setImagePrev(); stop=true;
+			case 38: IG.setImageUp(); stop=true;
+			case 39: IG.setImageNext(); stop=true;
+			case 40: IG.setImageDown(); stop=true;
+		}
+      if (stop) {
+       if (e.stopPropagation) e.stopPropagation();
+		 e.cancelBubble = true;
+		 e.returnValue = false;
+		}
+	  }
+
+   },
+	
 	// handle window resize
 	getResize : function() {
 		IG.fitBox();
@@ -577,12 +595,10 @@ var IG = {
 	
 	// clear the image from view
 	clearImage : function() {
-		$("#gimpImageBoxDummy").empty();
+		$("#gimpImageBoxImage").remove();
+		$("#gimpImageBoxDummy").prepend($("<img id='gimpImageBoxImage' src='"+IG.Ims.icon_128+"' style='opacity:0.1;' />"));
 		$("#gimpImageBoxTitle").text("");
 	},
-	
-	hideArrows : function() { $("#gimpImageBoxOver").css("visibility","hidden"); },
-	showArrows : function() { $("#gimpImageBoxOver").css("visibility","visible"); },
 	
 	// upon image error, set image to the failed logo
 	imerr : function() {
@@ -602,54 +618,13 @@ var IG = {
 			if(!c) temp.push(IG.gimpLinks[a]);
 		}
 		if(IG.gimpLinks.length!=temp.length) {
-			IG.gLog((IG.gimpLinks.length-temp.length)+' dupes removed, '+temp.length+' remain');
+			IG.gLog((IG.gimpLinks.length-temp.length)+' duplicates removed');
 			IG.gimpLinks=temp;
-		} else { IG.gLog('No duplicates found'); }
+		} else { console.log('No duplicates found'); }
 	},
-
+	
 	// fusker parser
-	parseNumFusker : function(strip,num){
-		var next=num+1;
-		var zeros, let, check, b;
-		var start=/\w+/.exec(IG.matches[1][num])+'';
-		var end=/\w+/.exec(IG.matches[2][num])+'';
-		
-		var check1=IG.ll.indexOf(start.substr(0,1));
-		var check2=IG.ll.indexOf(end.substr(0,1));
-		var check3=IG.lu.indexOf(start.substr(0,1));
-		var check4=IG.lu.indexOf(end.substr(0,1));
-		
-		if(/\d+\D+|\D+\d+/.test(start) || /\d+\D+|\D+\d+/.test(end)) { var zeros=0; start=parseInt(start); end=parseInt(end); }
-		else if(check1!=-1 && check2!=-1) { zeros=0; let=1; start=check1; end=check2; }
-		else if(check1!=-1 && check4!=-1) { zeros=0; let=1; start=check1; end=check4; }
-		else if(start=='' && check2!=-1) { zeros=0; let=1; start=-1; end=check2; }
-		else if(check3!=-1 && check4!=-1) { zeros=0; let=2; start=check3; end=check4; }
-		else if(check3!=-1 && check2!=-1) { zeros=0; let=2; start=check3; end=check2; }
-		else if(start=='' && check4!=-1) { zeros=0; let=2; start=-1; end=check4; }
-		else if(start.substr(0,1)=='0' && start!='') { zeros=1; let=0;}
-		else { zeros=0; let=0; }
-		
-		if(start>end) { check=start; start=end; end=check; }
-		
-		for(var i=start;i<=end;i++){
-			if(zeros) b=IG.leadingZeros(i,String(start).length);
-			else if(let==1) b=IG.ll.charAt(i);
-			else if(let==2) b=IG.lu.charAt(i);
-			else b=i;
-			var newstrip=strip+b+splits[next];
-			if(IG.matches[1][next]==null) { 
-				var ext = newstrip.match(/\.([^\.\/\\\?]+)$/);
-				
-				IG.tempArray[IG.tempArray.length]=newstrip;
-				IG.makeFilePath(newstrip,"","gimpLinks",IG.gimpLinks.length,3);
-			} else {
-				IG.parseFusker(newstrip,next);
-			}
-		}
-	},
-
-	// fusker parser for deep link fuskering
-	parseLinkFusker : function(strip,num){
+	parseFusker : function(strip,num){
 		var next=num+1;
 		var zeros, let, check, b;
 		var start=/\w+/.exec(IG.matches[1][num])+'';
@@ -721,155 +696,72 @@ var IG = {
 		IG.gimpLinks = temp;
 		IG.gLog(c+" links removed from list");
 	},
-	
-	// handle keypresses
-	getKeypress : function(e) {
-		//console.log(e.keyCode);
-		var stop=false;
-		//IG.gLog(" ("+e.keyCode+") ["+String.fromCharCode(e.keyCode)+"] {"+e.charCode+"}");
-		switch(e.keyCode) {
-			case 13: IG.addUrl(); stop=1; break;
-			case 37: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImagePrev(); stop=1; break; }
-			case 38: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageUp(); stop=1; break; }
-			case 39: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageNext(); stop=1; break; }
-			case 40: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageDown(); stop=1; break; }
-			default: $("#gimpListBoxInput").focus(); 
-		}
-		if(stop) {
-			if (e.stopPropagation) e.stopPropagation();
-			e.cancelBubble = true;
-			e.returnValue = false;
-		}
-	},
-	
-	// run a string through the commandline from the listbox header
-	addUrl : function(e) {
-		//console.log(e);
-		var val = $("#gimpListBoxInput").val();
-		if(val == "") $("#gimpListBoxFooter").text("Command empty");
-		else { $("#gimpListBoxInput").val(""); IG.getCMD(val); }
-	},
-	
+
+
 	getCMD : function(url) {
 		// show - show the image box
-		try{
-		if(/^show ?(.+)?$/i.exec(url)) {
-			var reg = RegExp.$1;
-			if(reg=="") { 
-				IG.showListBox();
-				return;
-			} 
-			// show all image links
-			if(/^all$/i.exec(reg)) {
-				IG.writeImgList({type:'num',start:0,end:IG.gimpLinks.length-1});
-				return;
-			} 
-			// show a single image with a list id of ##
-			if(/^(\d+)$/i.exec(reg)) {
-					var num=RegExp.$1*1;
-					if(IG.gimpLinks.length>num && num>=0) IG.popImage(num);
-					else IG.gLog("That link is outside my scope");
-					return;
+		if(url == "show") {
+			if(IG.isShowing == false) {
+				window.addEventListener("resize", IG.getResize, false);
+				window.addEventListener("keydown", IG.getKeypress, false);
 			}
-			IG.tempArray = IG.gimpLinks;
-			var match=reg.match(/\(\d*,?\d*\)|\{.+?\}|\[.+?\]/g);
-			while(reg = match.shift()) {
-				// show image list with a length of ##
-				if(/^\((\d+)\)$/i.exec(reg)) {
-					IG.grabLinkList({type:'num',start:0,end:RegExp.$1-1});
-				} 
-				// show image list from ## to ##, either can be blank
-				else if(/^\((\d*),(\d*)\)$/i.exec(reg)) {
-					var n1 = RegExp.$1==''?0:RegExp.$1*1;
-					var n2 = RegExp.$2==''?IG.gimpLinks.length-1:RegExp.$2*1;
-					IG.grabLinkList({type:'num',start:n1,end:n2});
-				} 
-				// show image list if link contains string
-				else if(/^\{(.+)\}$/i.exec(reg)) {
-					IG.grabLinkList({type:'str',str:RegExp.$1});
-				} 
-				// show image list from size of image
-				else if(/^\[(.+)\]$/i.exec(reg)) {
-					var n1 = RegExp.$1;
-					var b = (function(){
-						if(/\d+/.exec(n1)) return n1*1;
-						for(var a=0;a<IG.linkSizeTypes.length;a++) { 
-							if(IG.linkSizeTypes[a].name.toLowerCase()==n1.toLowerCase()) return a; 
-						}
-						return false;
-					})();
-					IG.grabLinkList({type:'size',size:b});
-				}
-			}
-			IG.writeImgList(IG.tempArray);
+			IG.showListBox();
+			IG.writeLinkList();
+			if(IG.I.id !== false) IG.popImage(IG.I.id);
 		} 
 		// hide - hide the image box
-		else if(/^hide ?(.+)?$/i.exec(url)) {
+		else if(url == "hide") {
 			IG.hideListBox();
+			
+			window.removeEventListener("resize", IG.getResize, false);
+			window.removeEventListener("keydown", IG.getKeypress, false);
 		} 
 		// make - create list from the dom and show the box if not already showing
-		else if(/^make ?(.+)?$/i.exec(url)) {
-			var reg = RegExp.$1;
-			IG.showListBox();
-			IG.gimpLinks = [];
-			IG.I.id = false;
-			if(reg=="" || /all/i.exec(reg)) {
-				IG.makeListFromLinks();
-				IG.makeListFromImages();
-				IG.makeListFromHtml();
-			} else if(/links?/i.exec(reg)) {
-				IG.makeListFromLinks();
-			} else if(/images?|imgs?/i.exec(reg)) {
-				IG.makeListFromImages();
-			} else if(/html/i.exec(reg)) {
-				IG.makeListFromHtml();
+		else if(url == "make") {
+			if(IG.isShowing == false) {
+				window.addEventListener("resize", IG.getResize, false);
+				window.addEventListener("keydown", IG.getKeypress, false);
+				IG.showListBox();
 			}
-			if(IG.gimpLinks.length>0) { 
-				IG.clearImage();
-				IG.gLog(IG.gimpLinks.length+" images found");
-				if(/nodupes/i.exec(reg)) IG.noDupes(); 
-			} else IG.gLog("No images found");
+			
+			IG.makeLinkList();
 			IG.writeLinkList();
 		} 
-		// list - redraw the link list
-		else if(/^list$/i.exec(url)) {
+		// list - redraw the image list
+		else if(url == "list") {
 			IG.writeLinkList();
 		} 
 		// clear - clear image list and current image
-		else if(/^clear ?(.+)?$/i.exec(url)) {
-			var reg = RegExp.$1;
-			if(reg=="" || /all/i.exec(reg)) { 
-				IG.clearList();
-				IG.clearImage();
-			} else if (/list/i.exec(reg)) {
-				IG.clearList();
-			} else if (/image|img/i.exec(reg)) {
-				IG.clearImage();
-			}
-			IG.isLoading = false; 
+		else if(url == "clear") {
+			IG.clearList();
+			IG.clearImage();
+			IG.isLoading = false;
+		} 
+		// loadcancel - cancel loading image
+		else if(url == "loadcancel") {
+			IG.clearImage();
+			IG.isLoading = false;
 		} 
 		// nodupes - remove all duplicate images from the list
-		else if(/^nodupes$/i.exec(url)) {
-			if(IG.gimpLinks.length>0) {
-				IG.noDupes();
-				IG.writeLinkList();
-			}
+		else if(/^nodupes$/.exec(url)) {
+			IG.noDupes();
+			IG.writeLinkList();
 		} 
 		// dump - remove all images 
-		else if(/^dump$/i.exec(url)) {
+		else if(/^dump$/.exec(url)) {
 			IG.linkDump();
 			IG.writeLinkList();
 		}
 		// background regex - change background color of image box
-		else if(/^background ?(.+)/i.exec(url)) {
-			var reg = RegExp.$1;
+		else if(/^background ?([^ ]+)/.exec(url)) {
+			var c = RegExp.$1;
 			if(IG.isCreated == true) {
-				$("#gimpImageBox").css("background-color",reg);
-				//console.log(reg);
+				$("#gimpImageBox").css("background",c);
+				//console.log(c);
 			}
 		} 
 		// keep regex - keep phrase syntax
-		else if(/^keep ?([^ ]+)$/i.exec(url)) {
+		else if(/^keep ?([^ ]+)$/.exec(url)) {
 			regex=RegExp(RegExp.$1,'i');
 			b=0;
 			for(var a=0;a<IG.gimpLinks.length;a++) {
@@ -879,7 +771,7 @@ var IG = {
 			IG.writeLinkList();
 		}
 		// del/rem regex - keep phrase syntax
-		else if(/^(?:del|rem|delete|remove) ?([^ ]+)$/i.exec(url)) {
+		else if(/^(?:del|rem|delete|remove) ?([^ ]+)$/.exec(url)) {
 			regex=RegExp(RegExp.$1,'i');
 			b=0;
 			for(var a=0;a<IG.gimpLinks.length;a++) {
@@ -889,7 +781,7 @@ var IG = {
 			IG.writeLinkList();
 		}
 		// keept/keeph N - keep number of images from head or tail syntax
-		else if(/^keep(h|t) ?(\d+)$/i.exec(url)) {
+		else if(/^keep(h|t) ?(\d+)$/.exec(url)) {
 			var b = IG.gimpLinks.length-RegExp.$2
 			if(RegExp.$1=='h') IG.gimpLinks.splice(RegExp.$2,IG.gimpLinks.length);
 			else IG.gimpLinks.splice(0,b);
@@ -897,7 +789,7 @@ var IG = {
 			IG.writeLinkList();
 		}
 		// remt/remh/delt/delh N - remove number of images from head or tail syntax
-		else if(/^(?:del|rem|delete|remove)(h|t) ?(\d+)$/i.exec(url)) {
+		else if(/^(?:del|rem|delete|remove)(h|t) ?(\d+)$/.exec(url)) {
 			var b = IG.gimpLinks.length-RegExp.$2
 			if(RegExp.$1=='h') IG.gimpLinks.splice(0,RegExp.$2);
 			else IG.gimpLinks.splice(b,RegExp.$2);
@@ -905,21 +797,20 @@ var IG = {
 			IG.writeLinkList();
 		}
 		// preload all
-		else if(/^preload ?(.+)?$/i.exec(url)) {
-			if(IG.preLoading) return;
-			var reg = RegExp.$1;
-			if(reg=="" || /all/i.exec(reg)) {
-				var ilinks = [];
-				$.each(IG.gimpLinks,function(k,v){ ilinks.push(v.gl); });
-			}
+		else if(/^preload ?all$/.exec(url)) {
+			var ilinks = [];
+			$.each(IG.gimpLinks,function(k,v){
+				//console.log(k,v);
+				ilinks.push(v.gl);
+			});
 			$.preload(ilinks,{
 				onRequest:function(data){ 
-					IG.preLoading = true;
+					IG.isLoading = true;
 					IG.gLog("Attempting "+(data.index+1)+" of "+data.total);
 					//console.log('attempting ',data.image); 
 				},
 				onFinish:function(data){ 
-					IG.preLoading = false;
+					IG.isLoading = false;
 					IG.gLog(data.loaded+" of "+data.total+" loaded successfully");
 					console.log(data);
 				},
@@ -929,7 +820,7 @@ var IG = {
 			});
 		}
 		// /regex/replace/ - replace some text with something else
-		else if(/^\{(.+?)\} ?\[(.*)\]$/i.exec(url)) {
+		else if(/^r\:(.+?)\; ?w\:(.*)\;$/.exec(url)) {
 			toreplace=RegExp.$2;
 			tomatch=RegExp.$1;
 			var c = 0;
@@ -957,7 +848,7 @@ var IG = {
 			}
 			splits[i] = searchstring;
 			
-			IG.parseLinkFusker(splits[0],0);
+			IG.parseFusker(splits[0],0);
 			
 			IG.gLog(IG.tempArray.length+" new links added");
 			IG.writeLinkList();
@@ -968,11 +859,7 @@ var IG = {
 			IG.makeFilePath(url,"","gimpLinks",IG.gimpLinks.length,4);
 			IG.gLog("1 new link added");
 			IG.writeLinkList();
-		} else IG.gLog("That command made no sense");
-		}catch(e) {
-		 console.log(e);
-		 IG.gLog("You just accidentally the whole thing");
-		} 
+		}
 	}
 } 
 

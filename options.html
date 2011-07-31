@@ -118,16 +118,30 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 			<td class="title" valign="top">make list</td>
 			<td valign="top"> - </td>
 			<td>
-				Make a list of all images in the DOM and show the box if it is not already showing
-				<div class="example">make</div>
+				Make a list of images in the DOM and show the box if it is not already showing
+				<div class="example">
+					make<br/>
+					make all<br/>
+					make links<span>add images from links</span><br/>
+					make images<span>add images from images</span><br/>
+					make html<span>add images from the dom</span>
+				</div>
 			</td>
 		</tr>
 		<tr>
 			<td class="head" valign="top">show box</td>
 			<td valign="top"> - </td>
 			<td>
-				Show the box
-				<div class="example">show</div>
+				Show the box, and show an image, or image list.  Make sure to preload images before trying size matching, and remember that the order of commands matters
+				<div class="example">
+					show<br/>
+					show all<span>show all images in the list</span><br/>
+					show {foo}<span>show only images that include the text "foo"</span><br/>
+					show (14)<span>show the first 14 links</span><br/>
+					show(5,16)<span>show images from 5 to 16</span><div>Neither number is necessary<br/>(,#) will start from the beginning<br/>(#,) will stop at the end of the list<br/>(,) is synonymous with show all</div><br/>
+					show [large]<span>show images that are large</span><div>There are 5 image size categories: tiny, small, medium, large, extra large</div><br/>
+					show[medium]{foo}(5)<span>show the first 5 medium images with the word foo</span>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -138,20 +152,25 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 				<div class="example">hide</div>
 			</td>
 		</tr>
-		<tr>
+		<!--<tr>
 			<td class="head" valign="top">show list</td>
 			<td valign="top"> - </td>
 			<td>
 				Show the list if it has been changed somehow (and hasn't updated for some reason)
 				<div class="example">list</div>
 			</td>
-		</tr>
+		</tr>-->
 		<tr>
 			<td class="head" valign="top">clear list</td>
 			<td valign="top"> - </td>
 			<td>
-				Clear the current list and remove the current image
-				<div class="example">clear</div>
+				Clear the current list and/or remove the current image
+				<div class="example">
+					clear<br/>
+					clear all<br/>
+					clear list<span>clear only the list</span><br/>
+					clear image<span>clear only the image</span>
+				</div>
 			</td>
 		</tr>
 		<!-- <tr>
@@ -162,6 +181,22 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 				<div class="example">loadcancel</div>
 			</td>
 		</tr> -->
+		<tr>
+			<td class="head" valign="top">preload</td>
+			<td valign="top"> - </td>
+			<td>
+				Preload all the images from the list, this will freeze the script until the operation concludes
+				<div class="example">preload all</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="head" valign="top">remove failed</td>
+			<td valign="top"> - </td>
+			<td>
+				Remove all images that failed to load or preload from the list
+				<div class="example">dump</div>
+			</td>
+		</tr>
 		<tr>
 			<td class="head" valign="top">keep</td>
 			<td valign="top"> - </td>
@@ -200,8 +235,8 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 			<td>
 				Replace one part of the url text with something else 
 				<div class="example">
-				r:regex; w:string; <div>// will replace all instances of regex with string</div><br/>
-				r:foo;w:bar; <div>// will replace all instances of foo with bar</div></div>
+				{regex} [string] <span>will replace all instances of regex with string</span><br/>
+				{foo}[bar] <span>will replace all instances of foo with bar</span></div>
 			</td>
 		</tr>
 		<tr>
