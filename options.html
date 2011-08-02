@@ -86,18 +86,6 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 			You will need to reload any pages for this effect to take place.
 		</div>
 	</div>
-	<!-- <div class="option">
-		<div class="title">
-			HTML Replace
-		</div>
-		<div class="input">
-			<input type="checkbox" id="htmlReplace" title="Replace old list" onchange="setHtmlReplace()"/>
-		</div>
-		<div class="explanation">
-			This option is useful on most open directories and will give a cleaner interface.
-			However If executing ImageGimp on a large website that is already using a lot of javascript, this option can cause the script to break down entirely (often evidenced by producing a blank screen and a large error in firebug) That is why this option is off by default.
-		</div>
-	</div> -->
 	<div class="option">
 		<div class="title">
 			Save Changes
@@ -107,7 +95,10 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 		</div>
 	</div>
 </div>
-
+<br/><br/>
+<a href="http://www.imagegimp.com/r_commandlist.php">Command List</a><br/>
+<a href="http://www.imagegimp.com/r_changelog.php">Change Log</a><br/>
+<!-- 
 <div class="commands">
 	<div class="header">
 		INPUT COMMANDS
@@ -152,14 +143,6 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 				<div class="example">hide</div>
 			</td>
 		</tr>
-		<!--<tr>
-			<td class="head" valign="top">show list</td>
-			<td valign="top"> - </td>
-			<td>
-				Show the list if it has been changed somehow (and hasn't updated for some reason)
-				<div class="example">list</div>
-			</td>
-		</tr>-->
 		<tr>
 			<td class="head" valign="top">clear list</td>
 			<td valign="top"> - </td>
@@ -173,14 +156,6 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 				</div>
 			</td>
 		</tr>
-		<!-- <tr>
-			<td class="head" valign="top">clear image</td>
-			<td valign="top"> - </td>
-			<td>
-				Clear the current image
-				<div class="example">loadcancel</div>
-			</td>
-		</tr> -->
 		<tr>
 			<td class="head" valign="top">preload</td>
 			<td valign="top"> - </td>
@@ -299,6 +274,6 @@ $.getJSON(chrome.extension.getURL("changelog.txt"),
 	<button onclick="getChangelog()" id="changebutton">Show Changelog</button>
 	<div id="logdiv"></div>
 </div>
-
+ -->
 </body>
 </html>

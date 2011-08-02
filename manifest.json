@@ -1,7 +1,7 @@
 {
 	"name": "ImageGimp",
-	"version": "1.0.8",
-	"description": "Grab Images from any webpage. See Options for detailed instructions.",
+	"version": "1.0.9",
+	"description": "Grab images from any webpage for easy viewing.",
 	"background_page" : "background.html",
 	"options_page" : "options.html",
 	"browser_action": {

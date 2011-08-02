@@ -13,6 +13,7 @@ var IG = {
 	percent : false,
 	lsBoxShowing : false,			// List Box is showing
 	imBoxShowing : false,			// Image Box is showing
+	maxSize : false,					// Maximum height and width for show all images
 		
 	widths : [
 		275,	// width of the side panel
@@ -88,7 +89,7 @@ var IG = {
 		IG.isCreated = true;
 		
 		// CSS
-		$("html").append("<style id='gimpCSS' type='text/css'>"+
+		$("html").append("<style id='gimpCSS' class='gimpnecessary' type='text/css'>"+
 		'#gimpNHTML { display:none; }\n'+
 		
 		'#gimpListBox { position:fixed; top:0px; left:0px; z-index:9999999; width: '+IG.widths[0]+'px; height:0px; background:#222222; overflow:hidden; font-family: verdana, arial; }\n'+
@@ -120,8 +121,8 @@ var IG = {
 		'.arrowInner { height:50px; width:150px; padding:5px; border-radius:10px; visibility:hidden; background-image:url('+IG.Ims.background+'); }\n'+
 		"</style>");
 
-		$("body").append(
-			$("<div id='gimpNHTML' />").append(
+		$("html").append(
+			$("<div id='gimpNHTML' class='gimpnecessary'/>").append(
 				$("<div id='gimpListBox' />").append( 
 					$("<div id='gimpListBoxHeader' />").append($("<input type='text' id='gimpListBoxInput' />")),
 					$("<div id='gimpListBoxContent' />"), 
@@ -161,7 +162,7 @@ var IG = {
 			window.addEventListener("resize", IG.getResize, false);
 			window.addEventListener("keydown", IG.getKeypress, false);
 			IG.isShowing = true;
-			$otherhtml = $("body").children().not("#gimpNHTML");
+			$otherhtml = $("html").children().not(".gimpnecessary");
 			$otherhtml.each(function(index){ 
 				if($(this).css("display")!='none') { $(this).css("display","none"); $(this).data('doremove',true); } 
 				else $(this).data('doremove',false);
@@ -176,7 +177,7 @@ var IG = {
 			window.removeEventListener("resize", IG.getResize, false);
 			window.removeEventListener("keydown", IG.getKeypress, false);
 			IG.isShowing = false;
-			$otherhtml = $("body").children().not("#gimpNHTML");
+			$otherhtml = $("html").children().not(".gimpnecessary");
 			$otherhtml.each(function(index){ if($(this).data('doremove')==true) $(this).css("display",""); });
 			$("#gimpNHTML").fadeOut("fast");
 		}
@@ -188,10 +189,10 @@ var IG = {
 
 		$("#gimpListBoxContent").html("");
 		$.each(d, function(k,v) {
-			if(v.loaded==undefined || v.loaded==true) var b = {"border-color":IG.getIGLABorder(v.gsv),"background-color":IG.linkFindTypes[v.gft].cssVal};
+			if(v.loaded==undefined || v.loaded==true) var b = {"border-color":IG.getIGLABorder(v.gst),"background-color":IG.linkFindTypes[v.gft].cssVal};
 			else var b = {"border-color":"#FF0000","background-color":"#000000"};
 			$("#gimpListBoxContent").append(
-				$("<div class='listAnchors' id='IGLA"+k+"' title='"+v.gl+"'>"+IG.getNameTruncated(v.gn)+"</div>")
+				$("<div class='listAnchors' id='IGLA"+k+"' title='"+IG.getAnchorTitle(k)+"'>"+IG.getNameTruncated(v.gn)+"</div>")
 				.click(function(){IG.popImage(k);})
 				.append($("<div class='IGLA' />").css(b))
 			);
@@ -201,11 +202,36 @@ var IG = {
 	writeImgList : function(d) {
 		if(d==undefined) d = IG.gimpLinks;
 		if(d.length==0) return;
+		
+		var msize = (IG.maxSize!==false) ? " style='max-width:"+IG.maxSize.w+"px;max-height:"+IG.maxSize.h+"px;'" : "";
+		
+		console.log(msize);
 
 		IG.hideArrows();
 		$("#gimpImageBoxDummy").empty();
 		$.each(d,function(k,v) {
-			$("#gimpImageBoxDummy").append($("<img src='"+v.gl+"' />").click(function(){IG.popImage(v.oid);}));
+			$("#gimpImageBoxDummy").append(
+				$("<img class='dummyimages' src='"+v.gl+"'"+msize+" />")
+					.data("oid",v.oid)
+					.mouseover(function(){ IG.setCurrentIGLA(v.oid); })
+					.click(function(){ IG.popImage(v.oid); })
+					
+			);
+		});
+		$.preload($(".dummyimages"),{
+			onRequest:function(data){ 
+				IG.preLoading = true;
+				IG.gLog("Attempting "+(data.index+1)+" of "+data.total);
+			},
+			onFinish:function(data){ 
+				IG.preLoading = false;
+				IG.gLog(data.loaded+" of "+data.total+" loaded successfully");
+			},
+			onComplete:function(data) {
+				IG.imageLoaded($(data.original).data("oid"),data,1);
+			},
+			placeholder:IG.Ims.loading,
+			notFound:IG.Ims.failed
 		});
 	},
 	
@@ -249,10 +275,12 @@ var IG = {
 	},
 	
 	makeListFromImages : function() {
-		$("img").each(function(i){
-			str = $(this).attr("src");
-			if(str!=undefined) { 
-				IG.makeFilePath(unescape(str),false,"gimpLinks",IG.gimpLinks.length,1);				
+		$("*").each(function(i){
+			if($(this).attr("src")!=undefined && ($(this).context.nodeName=="IMG" || $(this).attr("type")=="image")) {
+				IG.makeFilePath(unescape($(this).attr("src")),false,"gimpLinks",IG.gimpLinks.length,1);				
+			}
+			if(/url\((.+)\)/.exec($(this).css("background-image"))) {
+				IG.makeFilePath(unescape(RegExp.$1),false,"gimpLinks",IG.gimpLinks.length,1);				
 			}
 		}); 
 	},
@@ -407,17 +435,21 @@ var IG = {
 			notFound:IG.Ims.failed
 		});
 			
-		// this sets the selected image to be recolored, and uncolors the previous image
+		IG.setCurrentIGLA(num);
+		IG.imShowing = true;
+	},
+	
+	setCurrentIGLA : function(num) {
+		// this sets the selected link to be recolored, and uncolors the previous 
 		$("#IGLA"+num).attr("class","listAnchors IGLAChosen");
 		if(IG.I.pre!==false) $("#IGLA"+IG.I.pre).attr("class","listAnchors");
+		IG.I.pre = num;
 		
 		// this is to make sure that the current image should always be visible in the list
 		$sbi = $("#gimpListBoxContent")
 		if($("#IGLA"+num).position().top>$sbi.height()-16) { 
 			$sbi.scrollTop($sbi.scrollTop()+(16-($sbi.height()-$("#IGLA"+num).position().top))); } 
-		else if($("#IGLA"+num).position().top < 0) { $sbi.scrollTop(16*IG.I.id); }
-		
-		IG.imShowing = true;
+		else if($("#IGLA"+num).position().top < 0) { $sbi.scrollTop(16*num); }
 	},
 	
 	// set the title div to the url of the current image
@@ -426,6 +458,14 @@ var IG = {
 		
 		$("#gimpImageBoxTitle").html("<a href='"+IG.gimpLinks[IG.I.id].gl+"' id='gimpImageBoxTitleA'>"+gt+"</a>");
 		//console.log(IG.gimpLinks[IG.I.id]);
+	},
+	
+	getAnchorTitle : function(num) {
+		var o = IG.gimpLinks[num];
+		return num+"\n"+
+			o.gl+"\n"+
+			IG.linkFindTypes[o.gft].name+"\n"+
+			((o.gst===false) ? "Unloaded" : IG.linkSizeTypes[o.gst].name+" ("+o.gw+"x"+o.gh+")");
 	},
 	
 	// get the size type css information
@@ -458,7 +498,10 @@ var IG = {
 			o.gh = data.element.naturalHeight;
 			o.gsv = o.gw*o.gh;
 			o.gst = IG.getGST(o.gsv);
-			$("#IGLA"+index+" div").css("border-color",IG.getIGLABorder(o.gst));
+			$("#IGLA"+index+" div")
+				.css("border-color",IG.linkSizeTypes[o.gst].cssVal);
+			$("#IGLA"+index)
+				.attr("title",IG.getAnchorTitle(index))
 		} else if(!data.found) {
 			o.loaded = false;
 			$("#IGLA"+index+" div").css({"border-color":"#FF0000 !important","background-color":"#000000 !important"});
@@ -482,45 +525,24 @@ var IG = {
 			.height($(window).height());
 		if(IG.imShowing == true) IG.fitImageInBox();
 	},
-	
+
 	// fit the image inside the box
-	fitImageInBox : function() {
+	fitImageInBox : function(d) {
+		if(d==undefined) d = $("#gimpImageBoxImage");
 		var w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
 		var h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
-		var o = IG.gimpLinks[IG.I.id];
 		if(IG.isFullSize == true) { 
-			if(o.gw>w && o.gh<h) { $("#gimpImageBoxImage").css({margin:"auto auto auto 0px"}); }
-			else if(o.gw<w && o.gh>h) { $("#gimpImageBoxImage").css({margin:"0px auto auto auto"}); }
-			else if(o.gw>w && o.gh>h) { $("#gimpImageBoxImage").css({margin:"0px 0px 0px 0px"}); }
-			else if(o.gw<w && o.gh<h) { $("#gimpImageBoxImage").css({margin:"auto"}); }
+			if(d.context.naturalWidth>w && d.context.naturalHeight<h) { d.css({margin:"auto auto auto 0px"}); }
+			else if(d.context.naturalWidth<w && d.context.naturalHeight>h) { d.css({margin:"0px auto auto auto"}); }
+			else if(d.context.naturalWidth>w && d.context.naturalHeight>h) { d.css({margin:"0px 0px 0px 0px"}); }
+			else if(d.context.naturalWidth<w && d.context.naturalHeight<h) { d.css({margin:"auto"}); }
 			w = h = "";
 		} else { 
 			w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
 			h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
-			$("#gimpImageBoxImage").css({margin:"auto"});
+			d.css({margin:"auto"});
 		}
-		$("#gimpImageBoxImage").css({ "max-height":h, "max-width":w });
-	},
-	
-	// set the position of the image and title
-	positionImageInner : function() {
-		if(IG.isFullSize == false) {
-			$("#gimpImageBoxImage").position({
-				my:"center",
-				at:"center",
-				of:"#gimpImageBox"
-			});
-		} else {
-			$iw = $("#gimpImageBoxImage").width();
-			$ih = $("#gimpImageBoxImage").height();
-			$bw = $("#gimpImageBox").width();
-			$bh = $("#gimpImageBox").height();
-			
-			if($iw>$bw && $ih>$bh) { $("#gimpImageBoxImage").css({top:"0px",left:"0px"}); }
-			else if($iw>$bw) { $("#gimpImageBoxImage").css({top:(($bh/2)-($ih/2))+"px",left:"0px"}); }
-			else if($ih>$bh) { $("#gimpImageBoxImage").css({top:"0px",left:(($bw/2)-($iw/2))+"px"}); }
-			else { $("#gimpImageBoxImage").position({ my:"center", at:"center", of:"#gimpImageBox" }); }
-		}
+		d.css({ "max-height":h, "max-width":w });
 	},
 	
 	// cut long names in half and put ellipses in the middle
@@ -552,7 +574,6 @@ var IG = {
 		IG.isFullSize = true;
 		$("#gimpImageBoxArrowsU").attr("src",IG.Ims.arrowdown);
 		IG.fitImageInBox();
-		//IG.positionImageInner();
 	},
 	
 	// set images to display fit on the screen
@@ -560,7 +581,6 @@ var IG = {
 		IG.isFullSize = false;
 		$("#gimpImageBoxArrowsU").attr("src",IG.Ims.arrowup);
 		IG.fitImageInBox();
-		//IG.positionImageInner();
 	},
 	
 	// handle window resize
@@ -605,47 +625,6 @@ var IG = {
 			IG.gLog((IG.gimpLinks.length-temp.length)+' dupes removed, '+temp.length+' remain');
 			IG.gimpLinks=temp;
 		} else { IG.gLog('No duplicates found'); }
-	},
-
-	// fusker parser
-	parseNumFusker : function(strip,num){
-		var next=num+1;
-		var zeros, let, check, b;
-		var start=/\w+/.exec(IG.matches[1][num])+'';
-		var end=/\w+/.exec(IG.matches[2][num])+'';
-		
-		var check1=IG.ll.indexOf(start.substr(0,1));
-		var check2=IG.ll.indexOf(end.substr(0,1));
-		var check3=IG.lu.indexOf(start.substr(0,1));
-		var check4=IG.lu.indexOf(end.substr(0,1));
-		
-		if(/\d+\D+|\D+\d+/.test(start) || /\d+\D+|\D+\d+/.test(end)) { var zeros=0; start=parseInt(start); end=parseInt(end); }
-		else if(check1!=-1 && check2!=-1) { zeros=0; let=1; start=check1; end=check2; }
-		else if(check1!=-1 && check4!=-1) { zeros=0; let=1; start=check1; end=check4; }
-		else if(start=='' && check2!=-1) { zeros=0; let=1; start=-1; end=check2; }
-		else if(check3!=-1 && check4!=-1) { zeros=0; let=2; start=check3; end=check4; }
-		else if(check3!=-1 && check2!=-1) { zeros=0; let=2; start=check3; end=check2; }
-		else if(start=='' && check4!=-1) { zeros=0; let=2; start=-1; end=check4; }
-		else if(start.substr(0,1)=='0' && start!='') { zeros=1; let=0;}
-		else { zeros=0; let=0; }
-		
-		if(start>end) { check=start; start=end; end=check; }
-		
-		for(var i=start;i<=end;i++){
-			if(zeros) b=IG.leadingZeros(i,String(start).length);
-			else if(let==1) b=IG.ll.charAt(i);
-			else if(let==2) b=IG.lu.charAt(i);
-			else b=i;
-			var newstrip=strip+b+splits[next];
-			if(IG.matches[1][next]==null) { 
-				var ext = newstrip.match(/\.([^\.\/\\\?]+)$/);
-				
-				IG.tempArray[IG.tempArray.length]=newstrip;
-				IG.makeFilePath(newstrip,"","gimpLinks",IG.gimpLinks.length,3);
-			} else {
-				IG.parseFusker(newstrip,next);
-			}
-		}
 	},
 
 	// fusker parser for deep link fuskering
@@ -742,6 +721,10 @@ var IG = {
 		}
 	},
 	
+	clearOIDs : function() {
+		$.each(IG.gimpLinks,function(k,v){ delete v.oid; });
+	},
+	
 	// run a string through the commandline from the listbox header
 	addUrl : function(e) {
 		//console.log(e);
@@ -752,16 +735,19 @@ var IG = {
 	
 	getCMD : function(url) {
 		// show - show the image box
-		try{
+		//try{
 		if(/^show ?(.+)?$/i.exec(url)) {
 			var reg = RegExp.$1;
 			if(reg=="") { 
 				IG.showListBox();
 				return;
 			} 
+			
 			// show all image links
-			if(/^all$/i.exec(reg)) {
-				IG.writeImgList({type:'num',start:0,end:IG.gimpLinks.length-1});
+			if(/all/i.exec(reg)) {
+				IG.tempArray = IG.gimpLinks;
+				IG.grabLinkList({type:'num',start:0,end:IG.gimpLinks.length-1});
+				IG.writeImgList(IG.tempArray);
 				return;
 			} 
 			// show a single image with a list id of ##
@@ -811,18 +797,16 @@ var IG = {
 		else if(/^make ?(.+)?$/i.exec(url)) {
 			var reg = RegExp.$1;
 			IG.showListBox();
-			IG.gimpLinks = [];
 			IG.I.id = false;
+			IG.gimpLinks = [];
 			if(reg=="" || /all/i.exec(reg)) {
 				IG.makeListFromLinks();
 				IG.makeListFromImages();
 				IG.makeListFromHtml();
-			} else if(/links?/i.exec(reg)) {
-				IG.makeListFromLinks();
-			} else if(/images?|imgs?/i.exec(reg)) {
-				IG.makeListFromImages();
-			} else if(/html/i.exec(reg)) {
-				IG.makeListFromHtml();
+			} else {
+				if(/links?/i.exec(reg)) IG.makeListFromLinks();
+				if(/images?|imgs?/i.exec(reg)) IG.makeListFromImages();
+				if(/html/i.exec(reg)) IG.makeListFromHtml();
 			}
 			if(IG.gimpLinks.length>0) { 
 				IG.clearImage();
@@ -834,6 +818,16 @@ var IG = {
 		// list - redraw the link list
 		else if(/^list$/i.exec(url)) {
 			IG.writeLinkList();
+		} 
+		// maxsize - sets the maximum height and width for 
+		else if(/^maxsize ?(.+)$/i.exec(url) || /^(\<.+\>)$/i.exec(url)) {
+			var reg = RegExp.$1;
+			if(reg=="default") { IG.maxSize = false; IG.gLog("MaxSize reset to default"); }
+			else {
+				/^\<(\d+),(\d+)\>$/i.exec(reg);
+				IG.maxSize = { w:RegExp.$1 , h:RegExp.$2 };
+				IG.gLog("MaxSize set to <"+RegExp.$1+","+RegExp.$2+">");
+			}
 		} 
 		// clear - clear image list and current image
 		else if(/^clear ?(.+)?$/i.exec(url)) {
@@ -852,12 +846,20 @@ var IG = {
 		else if(/^nodupes$/i.exec(url)) {
 			if(IG.gimpLinks.length>0) {
 				IG.noDupes();
+				IG.clearOIDs();
 				IG.writeLinkList();
 			}
 		} 
 		// dump - remove all images 
+		else if(/^deep ?(.+)$/i.exec(url)) {
+			IG.linkDump();
+			IG.clearOIDs();
+			IG.writeLinkList();
+		}
+		// dump - remove all images 
 		else if(/^dump$/i.exec(url)) {
 			IG.linkDump();
+			IG.clearOIDs();
 			IG.writeLinkList();
 		}
 		// background regex - change background color of image box
@@ -876,6 +878,7 @@ var IG = {
 				if(!regex.test(IG.gimpLinks[a].gl)) { IG.gimpLinks.splice(a,1); a--; b++; }
 			}
 			IG.gLog(b+" images removed from list");
+			IG.clearOIDs();
 			IG.writeLinkList();
 		}
 		// del/rem regex - keep phrase syntax
@@ -886,6 +889,7 @@ var IG = {
 				if(regex.test(IG.gimpLinks[a].gl)) { IG.gimpLinks.splice(a,1); a--; b++; }
 			}
 			IG.gLog(b+" images removed from list");
+			IG.clearOIDs();
 			IG.writeLinkList();
 		}
 		// keept/keeph N - keep number of images from head or tail syntax
@@ -894,6 +898,7 @@ var IG = {
 			if(RegExp.$1=='h') IG.gimpLinks.splice(RegExp.$2,IG.gimpLinks.length);
 			else IG.gimpLinks.splice(0,b);
 			IG.gLog(b+" images removed from list");
+			IG.clearOIDs();
 			IG.writeLinkList();
 		}
 		// remt/remh/delt/delh N - remove number of images from head or tail syntax
@@ -902,6 +907,7 @@ var IG = {
 			if(RegExp.$1=='h') IG.gimpLinks.splice(0,RegExp.$2);
 			else IG.gimpLinks.splice(b,RegExp.$2);
 			IG.gLog(b+" images remain in list");
+			IG.clearOIDs();
 			IG.writeLinkList();
 		}
 		// preload all
@@ -969,10 +975,10 @@ var IG = {
 			IG.gLog("1 new link added");
 			IG.writeLinkList();
 		} else IG.gLog("That command made no sense");
-		}catch(e) {
+		/* }catch(e) {
 		 console.log(e);
 		 IG.gLog("You just accidentally the whole thing");
-		} 
+		} */
 	}
 } 
 

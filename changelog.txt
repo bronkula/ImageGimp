@@ -1,5 +1,18 @@
 [
 	{
+	"Number":"1.0.9",
+	"Features": [
+		"New command maxsize allows you to set the maximum height and width when using the show command"
+		],
+	"Changes": [
+		"A bug involving the dump command has been fixed",
+		"The make image algorithm has been improved and will now find any element with a background image as well as image inputs",
+		"The show command now updates the size values of the image list",
+		"More information is now shown in the tooltip of the list links when moused over."
+		]
+	},
+
+	{
 	"Number":"1.0.8",
 	"Features": [
 		"New website is now up at <a href='http://www.imagegimp.com'>imagegimp.com</a>",
@@ -9,7 +22,7 @@
 		"The 'make' command now accepts a few suffixes: 'links', 'images', 'html'",
 		"The 'clear' command now accepts a few suffixes: 'list', 'image'",
 		"The 'show' command now accepts a few suffixes: 'all', '{text}', '##', '(##)', '(##,##)', '[large]'",
-		"Some commands can now be chained together such as 'make images nodupes'",
+		"Some commands can now be chained together such as 'make images nodupes' and 'show {jpg} (10)'",
 		"The command input now works thanks to help from PAEz from the <a href='http://www.chromeplugins.org'>chromeplugins.org</a> forums<br/>\nTyping any text will use the input, and once focused arrow keys will be locked from their gimp commands<br/>\nTo gain back arrow key functionality, tab out of the text input, or click anywhere but the input",
 		"Replace syntax changed to {foo}[bar] to simplify things and synch with the new show commands",
 		"Improved the show/hide command so that it will unobtrusively hide dom elements"
