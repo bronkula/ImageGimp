@@ -1,65 +1,65 @@
-var IG = {
+function ImageGimp() {
+    
+    this.isCreated = false;              // gimpCSS has been instantiated
+    this.isShowing = false;              // ImageGimp panel is showing
+    this.imShowing = false;              // Image is showing inside panel
+    this.isLoading = false;              // Image is currently loading
+    this.preLoading = false;             // Image is currently loading
+    this.isFullSize = false;             // Images should be set to full size when opening
+    this.jqxhr = false;
+    this.trigger = false;
+    this.dlBytes = false;
+    this.totalBytes = false;
+    this.percent = false;
+    this.lsBoxShowing = false;           // List Box is showing
+    this.imBoxShowing = false;           // Image Box is showing
+    this.maxSize = false;                    // Maximum height and width for show all images
 
-    isCreated : false,              // gimpCSS has been instantiated
-    isShowing : false,              // ImageGimp panel is showing
-    imShowing : false,              // Image is showing inside panel
-    isLoading : false,              // Image is currently loading
-    preLoading : false,             // Image is currently loading
-    isFullSize : false,             // Images should be set to full size when opening
-    jqxhr : false,
-    trigger : false,
-    dlBytes : false,
-    totalBytes : false,
-    percent : false,
-    lsBoxShowing : false,           // List Box is showing
-    imBoxShowing : false,           // Image Box is showing
-    maxSize : false,                    // Maximum height and width for show all images
-        
-    widths : [
+    this.widths = [
         275,    // width of the side panel
         10,     // general padding width
         26,     // length of link strings
         12,     // font-size
         0       // Y-offset for scroll placement
-    ],
+    ];
 
     // various arrays for use throughout ImageGimp
-    gimpLinks : [],
-    matches : [],
-    tempArray : [],
-    ratios : [],
-    localStorage : {},
-    LSarray : ["addDate"],
-    linkFindTypes : [
+    this.gimpLinks = [];
+    this.matches = [];
+    this.tempArray = [];
+    this.ratios = [];
+    this.localStorage = {};
+    this.LSarray = ["addDate"];
+    this.linkFindTypes = [
         {name:"Link",cssVal:"#000088"},
         {name:"Image",cssVal:"#008800"},
         {name:"Html",cssVal:"#880000"},
         {name:"Fusker",cssVal:"#888800"},
         {name:"Insert",cssVal:"#880088"},
         {name:"Replace",cssVal:"#008888"}
-        ],
-    linkSizeTypes : [
+        ];
+    this.linkSizeTypes = [
         {name:"Tiny",minVal:0,maxVal:2500,cssVal:"#333333 !important"},
         {name:"Small",minVal:2501,maxVal:90000,cssVal:"#666666 !important"},
         {name:"Medium",minVal:90001,maxVal:480000,cssVal:"#999999 !important"},
         {name:"Large",minVal:480001,maxVal:6250000,cssVal:"#cccccc !important"},
         {name:"Extra Large",minVal:6250001,maxVal:1600000000,cssVal:"#ffffff !important"},
-        ],
+        ];
         
     // lowercase and uppercase alphabets from 
-    ll : "abcdefghijklmnopqrstuvwxyz",
-    lu : "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    this.ll = "abcdefghijklmnopqrstuvwxyz";
+    this.lu = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    currentImage : 0,
-    I : {       // current image object
+    this.currentImage = 0;
+    this.I = {       // current image object
         id : false, // id in the gimpLinks list
         iw : 0, // current image width
         ih : 0, // current image height
         src : false,
         pre : false
-    },
+    };
 
-    Ims : {
+    this.Ims = {
         loading         : chrome.extension.getURL("images/loading.gif"),
         failed          : chrome.extension.getURL("images/failed.png"),
         arrowleft       : chrome.extension.getURL("images/arrowleft.png"),
@@ -75,18 +75,18 @@ var IG = {
         icon_128 : chrome.extension.getURL("icon_128.png"),
         logo_128t : chrome.extension.getURL("images/full_logo_128t.png"),
         background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
-    },
+    };
     
-    fileFormats : [
+    this.fileFormats = [
         // Image formats
         ",ani,anim,apng,art,bef,bmf,bmp,bsave,cal,cgm,cin,cpc,dpx,ecw,exr,fits,flic,fpx,gif,hdri,icer,icns,ico,cur,ics,iges,"+
         "ilbm,jbig,jbig2,jng,jpeg,jpg,mng,miff,pbm,pcx,pgf,pgm,png,ppm,psp,qtvr,rad,rgbe,sgi,tga,tiff,wbmp,webp,xar,xbm,xcf,xpm,",
         // Video formats
         ",aiff,wav,xmf,fits,3gp,asf,avi,flv,f4v,iff,mkv,mj2,qt,mpeg,mpg,mp4,ogg,rm,"
-        ]
+        ];
 }
 
-IG.prototype.init = function() {
+ImageGimp.prototype.init = function() {
         IG.isCreated = true;
         
         // CSS
@@ -158,7 +158,7 @@ IG.prototype.init = function() {
         IG.clearImage();
     };
     
-IG.prototype.showListBox = function() {
+ImageGimp.prototype.showListBox = function() {
         if(IG.isShowing == false) {
             window.addEventListener("resize", IG.getResize, false);
             window.addEventListener("keydown", IG.getKeypress, false);
@@ -173,7 +173,7 @@ IG.prototype.showListBox = function() {
         }
     };
     
-IG.prototype.hideListBox = function() {
+ImageGimp.prototype.hideListBox = function() {
         if(IG.isShowing == true) {
             window.removeEventListener("resize", IG.getResize, false);
             window.removeEventListener("keydown", IG.getKeypress, false);
@@ -184,7 +184,7 @@ IG.prototype.hideListBox = function() {
         }
     };
 
-IG.prototype.writeLinkList = function(d) {
+ImageGimp.prototype.writeLinkList = function(d) {
         if(d==undefined) d = IG.gimpLinks;
         if(d.length==0) return;
 
@@ -200,7 +200,7 @@ IG.prototype.writeLinkList = function(d) {
         }); 
     };
     
-IG.prototype.writeImgList = function(d) {
+ImageGimp.prototype.writeImgList = function(d) {
         if(d==undefined) d = IG.gimpLinks;
         if(d.length==0) return;
         
@@ -236,7 +236,7 @@ IG.prototype.writeImgList = function(d) {
         });
     };
     
-IG.prototype.grabLinkList = function(d) {
+ImageGimp.prototype.grabLinkList = function(d) {
         var temp = [];
         if(!IG.tempArray.length) { return; }
         if(d.type=='num') {
@@ -265,7 +265,7 @@ IG.prototype.grabLinkList = function(d) {
         IG.tempArray=temp;
     };
     
-IG.prototype.makeListFromLinks  function() {
+ImageGimp.prototype.makeListFromLinks = function() {
         $("a").each(function(i){
             str = $(this).attr("href");
             if(str!=undefined && !str.match(/^(javascript:|mailto:)/)) { 
@@ -275,7 +275,7 @@ IG.prototype.makeListFromLinks  function() {
         }); 
     };
     
-IG.prototype.makeListFromImages = function() {
+ImageGimp.prototype.makeListFromImages = function() {
         $("*").each(function(i){
             if($(this).attr("src")!=undefined && ($(this).context.nodeName=="IMG" || $(this).attr("type")=="image")) {
                 IG.makeFilePath(unescape($(this).attr("src")),false,"gimpLinks",IG.gimpLinks.length,1);
@@ -286,7 +286,7 @@ IG.prototype.makeListFromImages = function() {
         }); 
     };
     
-IG.prototype.makeListFromHtml = function() {
+ImageGimp.prototype.makeListFromHtml = function() {
         docLinks = $("html").html().match(
             RegExp('(\\(|"|\'|=)((\\w+:\/\/|)[^\\n\'?&=:">]+\\.(jpg|jpeg|jpe|gif|png|xpm|bmp|tif|tiff|art))("|\'|>|&|\\)|\\W)','ig')
         );
@@ -301,7 +301,7 @@ IG.prototype.makeListFromHtml = function() {
         }
     };
 
-IG.prototype.makeFileCheck = function(str,title,arr,type) {
+ImageGimp.prototype.makeFileCheck = function(str,title,arr,type) {
         //console.log(arguments);
         var ext = str.match(/\.([^\.\/\\\?\)]+)$/);
         // if the link has what appears to be a file extension
@@ -315,7 +315,7 @@ IG.prototype.makeFileCheck = function(str,title,arr,type) {
     };
     
     // Update link at any position in array, including new
-IG.prototype.makeFilePath = function(str,title,arr,pos,type) { 
+ImageGimp.prototype.makeFilePath = function(str,title,arr,pos,type) { 
         var d = new Date();
     
         //console.log(arguments);
@@ -404,7 +404,7 @@ IG.prototype.makeFilePath = function(str,title,arr,pos,type) {
     };
     
     // load image and resize to fit the box
-IG.prototype.popImage = function(num) {
+ImageGimp.prototype.popImage = function(num) {
         if(IG.isLoading!==false) return false;
         if(IG.preLoading!==false && IG.gimpLinks[num].loaded==undefined) return false;
         IG.I.pre = IG.I.id;
@@ -440,7 +440,7 @@ IG.prototype.popImage = function(num) {
         IG.imShowing = true;
     };
     
-IG.prototype.setCurrentIGLA = function(num) {
+ImageGimp.prototype.setCurrentIGLA = function(num) {
         // this sets the selected link to be recolored, and uncolors the previous 
         $("#IGLA"+num).attr("class","listAnchors IGLAChosen");
         if(IG.I.pre!==false) $("#IGLA"+IG.I.pre).attr("class","listAnchors");
@@ -454,14 +454,14 @@ IG.prototype.setCurrentIGLA = function(num) {
     };
     
     // set the title div to the url of the current image
-IG.prototype.setImageTitle = function() {
+ImageGimp.prototype.setImageTitle = function() {
         gt = IG.gimpLinks[IG.I.id].gn+((IG.gimpLinks[IG.I.id].gi==false || IG.gimpLinks[IG.I.id].gn==IG.gimpLinks[IG.I.id].gi)?"":" : "+IG.gimpLinks[IG.I.id].gi);
         
         $("#gimpImageBoxTitle").html("<a href='"+IG.gimpLinks[IG.I.id].gl+"' id='gimpImageBoxTitleA'>"+gt+"</a>");
         //console.log(IG.gimpLinks[IG.I.id]);
     };
     
-IG.prototype.getAnchorTitle = function(num) {
+ImageGimp.prototype.getAnchorTitle = function(num) {
         var o = IG.gimpLinks[num];
         return num+"\n"+
             o.gl+"\n"+
@@ -470,12 +470,12 @@ IG.prototype.getAnchorTitle = function(num) {
     };
     
     // get the size type css information
-IG.prototype.getIGLABorder = function(num) {
+ImageGimp.prototype.getIGLABorder = function(num) {
         if(num===false) return "#000000 !important";
         else return IG.linkSizeTypes[num].cssVal;
     };
     
-IG.prototype.getGST = function(num) {
+ImageGimp.prototype.getGST = function(num) {
         var b = false;
         $.each(IG.linkSizeTypes, function(k,v) {
             if(num>=v.minVal && num<=v.maxVal) { b = k; return false; }
@@ -484,13 +484,13 @@ IG.prototype.getGST = function(num) {
     };
     
     // do this when image has loaded
-IG.prototype.imageIsLoaded = function() {
+ImageGimp.prototype.imageIsLoaded = function() {
         IG.gimpLinks[IG.I.id].loaded = true;
         IG.fitImageInBox();
     };
     
     // do this after loading an image
-IG.prototype.imageLoaded = function(index,data,pre) {
+ImageGimp.prototype.imageLoaded = function(index,data,pre) {
         var o = IG.gimpLinks[index];
         //console.log(arguments,o);
         if(data.found) {
@@ -515,7 +515,7 @@ IG.prototype.imageLoaded = function(index,data,pre) {
     };
     
     // fit the imagegimp box into the window
-IG.prototype.fitBox = function() {
+ImageGimp.prototype.fitBox = function() {
         $("#gimpListBox")
             .width(IG.widths[0])
             .height($(window).height());
@@ -528,7 +528,7 @@ IG.prototype.fitBox = function() {
     };
 
     // fit the image inside the box
-IG.prototype.fitImageInBox = function(d) {
+ImageGimp.prototype.fitImageInBox = function(d) {
         if(d==undefined) d = $("#gimpImageBoxImage");
         var w = $("#gimpImageBox").width()-(IG.widths[1]*2); 
         var h = $("#gimpImageBox").height()-(IG.widths[1]*2); 
@@ -547,7 +547,7 @@ IG.prototype.fitImageInBox = function(d) {
     };
     
     // cut long names in half and put ellipses in the middle
-IG.prototype.getNameTruncated = function(str) {
+ImageGimp.prototype.getNameTruncated = function(str) {
         //console.log(str)
         if(str.length > IG.widths[2]) {
             var str1 = str.substr(0,((IG.widths[2]/2)-1));
@@ -557,62 +557,62 @@ IG.prototype.getNameTruncated = function(str) {
     };
     
     // set image to the next image in list
-IG.prototype.setImageNext = function() {
+ImageGimp.prototype.setImageNext = function() {
         if(IG.I.id==IG.gimpLinks.length-1 || IG.I.id===false) i = 0; else i = IG.I.id+1;
         //console.log(i);
         IG.popImage(i);
     };
     
     // set image to the previous image in list
-IG.prototype.setImagePrev = function() {
+ImageGimp.prototype.setImagePrev = function() {
         if(IG.I.id==0) i = IG.gimpLinks.length-1; else i = IG.I.id-1;
         //console.log(i);
         IG.popImage(i);
     };
     
     // set image images to display at full size
-IG.prototype.setImageUp = function() {
+ImageGimp.prototype.setImageUp = function() {
         IG.isFullSize = true;
         $("#gimpImageBoxArrowsU").attr("src",IG.Ims.arrowdown);
         IG.fitImageInBox();
     };
     
     // set images to display fit on the screen
-IG.prototype.setImageDown = function() {
+ImageGimp.prototype.setImageDown = function() {
         IG.isFullSize = false;
         $("#gimpImageBoxArrowsU").attr("src",IG.Ims.arrowup);
         IG.fitImageInBox();
     };
     
     // handle window resize
-IG.prototype.getResize = function() {
+ImageGimp.prototype.getResize = function() {
         IG.fitBox();
     };
 
     // clear the link list and array
-IG.prototype.clearList = function() {
+ImageGimp.prototype.clearList = function() {
         IG.gimpLinks = [];
         $("#gimpListBoxContent").text("");
         IG.gLog("");
     };
 
     // clear the image from view
-IG.prototype.clearImage = function() {
+ImageGimp.prototype.clearImage = function() {
         $("#gimpImageBoxDummy").empty();
         $("#gimpImageBoxTitle").text("");
     };
 
-IG.prototype.hideArrows = function() { $("#gimpImageBoxOver").css("visibility","hidden"); };
-IG.prototype.showArrows = function() { $("#gimpImageBoxOver").css("visibility","visible"); };
+ImageGimp.prototype.hideArrows = function() { $("#gimpImageBoxOver").css("visibility","hidden"); };
+ImageGimp.prototype.showArrows = function() { $("#gimpImageBoxOver").css("visibility","visible"); };
 
     // upon image error, set image to the failed logo
-IG.prototype.imerr = function() {
+ImageGimp.prototype.imerr = function() {
         IG.isLoading = false;
         $("#gimpImageBoxOver").attr(chrome.extension.getURL("images/failed2.gif"));
     };
 
     // remove duplicate images
-IG.prototype.noDupes = function() {
+ImageGimp.prototype.noDupes = function() {
         var temp=[IG.gimpLinks[0]];
         var c;
         for(var a=0;a<IG.gimpLinks.length;a++){
@@ -629,7 +629,7 @@ IG.prototype.noDupes = function() {
     };
 
     // fusker parser for deep link fuskering
-IG.prototype.parseLinkFusker = function(strip,num){
+ImageGimp.prototype.parseLinkFusker = function(strip,num){
         var next=num+1;
         var zeros, let, check, b;
         var start=/\w+/.exec(IG.matches[1][num])+'';
@@ -670,7 +670,7 @@ IG.prototype.parseLinkFusker = function(strip,num){
     };
 
     // add zeros to fusker numbers
-IG.prototype.leadingZeros = function(a,n) {
+ImageGimp.prototype.leadingZeros = function(a,n) {
         var sign=''; var x; var r="";
         if (a<0) { a=0-a; sign='-'; }
         for (var i=0;i<n;i++) { x=a%10; a=(a-x)/10; r=x+r; }
@@ -678,7 +678,7 @@ IG.prototype.leadingZeros = function(a,n) {
     };
 
     // get localstorage value from extension
-IG.prototype.getLocalStorage = function() {
+ImageGimp.prototype.getLocalStorage = function() {
         for(var a=0;a<IG.LSarray.length;a++) {
             chrome.extension.sendRequest({method: "getLocalStorage", key: IG.LSarray[a]}, function(response) {
                 IG.localStorage[response.key] = response.data;
@@ -688,12 +688,12 @@ IG.prototype.getLocalStorage = function() {
     };
 
     // log information to the listbox footer
-IG.prototype.gLog = function(str) {
+ImageGimp.prototype.gLog = function(str) {
         $("#gimpListBoxFooter").text(str);
     };
 
     // dump empty links from the list
-IG.prototype.linkDump = function() {
+ImageGimp.prototype.linkDump = function() {
         var c = 0; var temp = [];
         $.each(IG.gimpLinks,function(k,v){
             if(v.loaded == undefined || v.loaded == true) temp.push(v); else c++; 
@@ -703,7 +703,7 @@ IG.prototype.linkDump = function() {
     };
 
     // handle keypresses
-IG.prototype.getKeypress = function(e) {
+ImageGimp.prototype.getKeypress = function(e) {
         //console.log(e.keyCode);
         var stop=false;
         //IG.gLog(" ("+e.keyCode+") ["+String.fromCharCode(e.keyCode)+"] {"+e.charCode+"}");
@@ -722,19 +722,19 @@ IG.prototype.getKeypress = function(e) {
         }
     };
 
-IG.prototype.clearOIDs = function() {
+ImageGimp.prototype.clearOIDs = function() {
         $.each(IG.gimpLinks,function(k,v){ delete v.oid; });
     },
     
     // run a string through the commandline from the listbox header
-IG.prototype.addUrl = function(e) {
+ImageGimp.prototype.addUrl = function(e) {
         //console.log(e);
         var val = $("#gimpListBoxInput").val();
         if(val == "") $("#gimpListBoxFooter").text("Command empty");
         else { $("#gimpListBoxInput").val(""); IG.getCMD(val); }
     };
 
-IG.prototype.getCMD = function(url) {
+ImageGimp.prototype.getCMD = function(url) {
         // show - show the image box
         //try{
         if(/^show ?(.+)?$/i.exec(url)) {
@@ -980,9 +980,9 @@ IG.prototype.getCMD = function(url) {
          console.log(e);
          IG.gLog("You just accidentally the whole thing");
         } */
-    }
-} 
+    };
 
+var IG = new ImageGimp();
 IG.getLocalStorage();
 
 

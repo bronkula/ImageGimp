@@ -1,13 +1,17 @@
 
 function addUrl(str) {
-    $val = typeof(str) != 'undefined' ? str : $(".toadd").val();
-    // chrome.tabs.getSelected(null, function(tab) {
-    //     chrome.extension.getBackgroundPage().console.log(tab.id,$val);
-    //     chrome.tabs.sendRequest(tab.id, {add:$val}, function(response){});
-    // });
+    console.log(str)
+    $val = str !== void[] ? str : $(".toadd").val();
+    if(chrome.tabs) {
+        chrome.tabs.getSelected(null, function(tab) {
+            chrome.extension.getBackgroundPage().console.log(tab.id,$val);
+            chrome.tabs.sendRequest(tab.id, {add:$val}, function(response){});
+        });
+    }
 }
 
 function insertSyntax(str,send) {
+    console.log(str)
     $(".toadd").focus();
     $(".toadd").val(str);
     if(send) addUrl(str);
@@ -43,7 +47,7 @@ $(function(){
         function(){ getKeept() },
         function(){ insertSyntax('nodupes',1) },
         function(){ insertSyntax('{} []') },
-        function(){ console.log("hello"); insertSyntax('make all nodupes',1) },
+        function(){ insertSyntax('make all nodupes',1) },
         function(){ insertSyntax('clear',1) },
         function(){ insertSyntax('show',1) },
         function(){ insertSyntax('hide',1) }

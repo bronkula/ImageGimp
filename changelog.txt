@@ -1,5 +1,13 @@
 [
 	{
+	"Number":"1.0.10",
+	"Features": [],
+	"Changes": [
+		"Completely remade the popup file.",
+		]
+	},
+
+	{
 	"Number":"1.0.9",
 	"Features": [
 		"New command maxsize allows you to set the maximum height and width when using the show command"

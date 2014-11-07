@@ -16,7 +16,7 @@
 	],
 	"content_scripts": [{
 		"matches":["http://*/*","https://*/*"],
-		"js": ["gimp.js","jquery-full.js"]
+		"js": ["gimp.js","jquery-2.1.1.min.js"]
 	}],
 	"icons": {
 		"16": "icon_16.png",
