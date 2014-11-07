@@ -1,83 +1,30 @@
 <html>
 <head>
-<script src="jquery-full.js"></script>
-<script>
-function addUrl(str) {
-	$val = typeof(str) != 'undefined' ? str : $("#toadd").val();
-	chrome.tabs.getSelected(null, function(tab) {
-		chrome.extension.getBackgroundPage().console.log(tab.id,$val);
-		chrome.tabs.sendRequest(tab.id, {add:$val}, function(response){});
-	});
-}
-
-function insertSyntax(str,send) {
-	$("#toadd").focus();
-	$("#toadd").val(str);
-	if(send) addUrl(str);
-}
-
-function getKeep() {
-	var r=confirm("To keep items press OK, to remove press Cancel");
-	if (r==true) { var kord = "keep "; }
-	else { var kord = "rem "; }
-	insertSyntax(kord);
-}
-function getKeept() {
-	var r=confirm("To keep items press OK, to remove press Cancel");
-	if (r==true) { var kord = "keep";} else { var kord = "rem"; }
-	var r=confirm("To affect items at the top of the list press OK,\nto affect items at the bottom of the list press Cancel");
-	if (r==true) { var hort = "h "; } else { var hort = "t "; }
-	insertSyntax(kord+hort);
-}
-</script>
-<style>
-.buttonimage { cursor:pointer; margin:0px; }
-#navlist { position:relative; }
-#navlist li { margin:0; padding:0; list-style:none; position:absolute; top:0; }
-#navlist li, #navlist a { height:20px; width:20px; display:block; }
-
-#dump { right:209px; background:url('images/buttonmap.png') 0 20px; }
-#dump:hover { background:url('images/buttonmap.png') 20px 20px; }
-#preload { right:188px; background:url('images/buttonmap.png') 0 40px; }
-#preload:hover { background:url('images/buttonmap.png') 20px 40px; }
-
-#keep { right:157px; background:url('images/buttonmap.png') 0 0; }
-#keep:hover { background:url('images/buttonmap.png') 20px 0; }
-#keept { right:136px; background:url('images/buttonmap.png') 0 180px; }
-#keept:hover { background:url('images/buttonmap.png') 20px 180px; }
-#nodupes { right:115px; background:url('images/buttonmap.png') 0 120px; }
-#nodupes:hover { background:url('images/buttonmap.png') 20px 120px; }
-#replace { right:94px; background:url('images/buttonmap.png') 0 60px; }
-#replace:hover { background:url('images/buttonmap.png') 20px 60px; }
-
-#make { right:63px; background:url('images/buttonmap.png') 0 140px; }
-#make:hover { background:url('images/buttonmap.png') 20px 140px; }
-#clear { right:42px; background:url('images/buttonmap.png') 0 160px; }
-#clear:hover { background:url('images/buttonmap.png') 20px 160px; }
-#show { right:21px; background:url('images/buttonmap.png') 0 80px; }
-#show:hover { background:url('images/buttonmap.png') 20px 80px; }
-#hide { right:0px; background:url('images/buttonmap.png') 0 100px; }
-#hide:hover { background:url('images/buttonmap.png') 20px 100px; }
-</style>
+	<script src="jquery-2.1.1.min.js"></script>
+	<script src="popup.js"></script>
+	<link rel="stylesheet" href="popup.css">
 </head>
-<body onload='$("#toadd").focus()'>
-<form onsubmit="addUrl(); return false;" style="margin:0px;padding:0px;">
+<body>
+<form class="form-main">
+<div class="nav-list">
+	<div class="dump" data-title="Remove images that failed loading">&nbsp;</div>
+	<div class="preload" data-title="Preload images">&nbsp;</div>
+	
+	<div class="keep" data-title="Keep or remove links">&nbsp;</div>
+	<div class="keept" data-title="Keep or remove tail or head">&nbsp;</div>
+	<div class="nodupes" data-title="Remove duplicates">&nbsp;</div>
+	<div class="replace" data-title="Replace syntax">&nbsp;</div>
+	
+	<div class="make" data-title="Make new list">&nbsp;</div>
+	<div class="clear" data-title="Clear list">&nbsp;</div>
+	<div class="show" data-title="Show box">&nbsp;</div>
+	<div class="hide" data-title="Hide box">&nbsp;</div>
+</div>
+<div class="description">
+	&nbsp;<span></span>
+</div>
 <div>
-		<ul id="navlist">
-			<li id="dump"><a href="javascript:insertSyntax('dump',1); return false;" title="Remove images that failed loading"></a></li>
-			<li id="preload"><a href="javascript:insertSyntax('preload all',1); return false;" title="Preload images"></a></li>
-			
-			<li id="keep"><a href="javascript:getKeep(); return false;" title="Keep or remove links from list with text"></a></li>
-			<li id="keept"><a href="javascript:getKeept(); return false;" title="Keep or remove text from tail or head of list"></a></li>
-			<li id="nodupes"><a href="javascript:insertSyntax('nodupes',1); return false;" title="Remove duplicates"></a></li>
-			<li id="replace"><a href="javascript:insertSyntax('{} []'); return false;" title="Replace syntax"></a></li>
-			
-			<li id="make"><a href="javascript:insertSyntax('make all nodupes',1); return false;" title="Make new list"></a></li>
-			<li id="clear"><a href="javascript:insertSyntax('clear',1); return false;" title="Clear list"></a></li>
-			<li id="show"><a href="javascript:insertSyntax('show',1); return false;" title="Show box"></a></li>
-			<li id="hide"><a href="javascript:insertSyntax('hide',1); return false;" title="Hide box"></a></li>
-		</ul>
-	<input type="text" id="toadd" size="40" style="text-align:right;margin-top:22px;">
+	<input type="text" class="toadd">
 	<!--<input type="button" value="Add" onClick="addUrl();">-->
 	<!--<input type="checkbox" name="reporadd" title="Replace old list">-->
 </div>
