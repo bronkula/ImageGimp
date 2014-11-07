@@ -1,0 +1,142 @@
+#gimpNHTML {
+    display:none;
+}
+#gimpListBox {
+    position:fixed;
+    top:0px;
+    left:0px;
+    z-index:9999999;
+    width: 275px;
+    height:0px;
+    background:#222222;
+    overflow:hidden;
+    font-family: verdana, arial;
+}
+#gimpListBoxHeader {
+    height:20px;
+    padding:10px 10px 0px 10px ;
+}
+#gimpListBoxInput {
+    border:#888888 1px solid !important;
+    background:#000000 !important;
+    color:#ffffff !important;
+    font:normal 12px/14px verdana, arial !important;
+    width:255px !important;
+    height:17px !important;
+    padding:0px !important;
+    margin:0px !important;
+}
+#gimpListBoxContent {
+    position:relative;
+    width: 255px;
+    height:100%;
+    background:#000000;
+    margin:10px;
+    color:#ffffff;
+    overflow:auto;
+    font-size:12px;
+}
+.listAnchors {
+    cursor:pointer;
+    padding:1px;
+    color:#ffffff;
+    font:normal 12px/14px verdana, arial !important;
+    text-align:left !important;
+}
+.IGLA {
+    float:right;
+    margin:1px;
+    height:10px;
+    width:10px;
+    border:#222222 1px solid;
+}
+.IGLAChosen {
+    background:#113311 !important;
+}
+.listAnchors:hover {
+    background:#333333;
+}
+#gimpListBoxFooter {
+    height:15px;
+    padding:0px 10px 10px 10px !important;
+    font:normal 10px/12px verdana, arial !important;
+    color:#ffffff !important;
+    text-align:center !important;
+}
+#gimpImageBox {
+    position:fixed;
+    top:0px;
+    left:275px;
+    z-index:9999998;
+    width: 255px;
+    height:100%;
+    background:#000000 url() no-repeat center;
+    overflow:hidden;
+    font-size:12px;
+    font-family: verdana, arial;
+}
+#gimpImageBoxUnder {
+    position:relative;
+    overflow:auto;
+    height:100%;
+    width:100%;
+}
+#gimpImageBoxDummy {
+    position:relative;
+    overflow:auto;
+    height:100%;
+    width:100%;
+}
+#gimpImageBoxImage {
+    position:absolute;
+    top:0px;
+    right:0px;
+    bottom:0px;
+    left:0px;
+    margin:auto;
+}
+#gimpImageBoxOver {
+    visibility:hidden;
+}
+#gimpImageBoxTitle {
+    position:absolute;
+    bottom:25px;
+    left:0px;
+    right:0px;
+    margin:auto;
+    text-align:center;
+}
+#gimpImageBoxTitleA {
+    font:normal 12px/14px verdana, arial !important;
+    color:white !important;
+    text-decoration:none !important;
+    min-width:150px ;
+    max-width:500px;
+    padding:5px 10px 5px 10px !important;
+    border-radius:10px !important;
+    background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg==);
+}
+#gimpImageBoxArrows {
+    height:60px;
+    width:160px;
+    bottom:44px;
+    left:0px;
+    right:0px;
+    margin-right:auto;
+    margin-left:auto;
+    position:absolute;
+}
+#gimpImageBoxArrows:hover .arrowInner {
+    visibility:visible;
+}
+.arrowBut {
+    cursor:pointer;
+}
+.arrowInner {
+    height:50px;
+    width:150px;
+    padding:5px;
+    border-radius:10px;
+    visibility:hidden;
+    background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg==);
+}

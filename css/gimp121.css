@@ -1,0 +1,84 @@
+.gimp-container, .gimp-container * {
+    box-sizing:border-box;
+}
+
+.fill-parent {
+    position:absolute;
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+}
+
+.gimp-container {
+    position:fixed;
+    background-color:black;
+    font-size:16px;
+}
+
+.gimp-controls {
+    width:20em;
+    background-color:#232;
+}
+
+
+.gimp-controls-magicbox,.gimp-controls-list,.gimp-controls-info {
+    position:absolute;
+    width:calc(100% - 1.5em);
+}
+.gimp-controls-magicbox {
+    position:absolute;
+    top:.75em;
+    left:.75em;
+    height:1.5em;
+    background-color:black;
+    border:1px solid #999;
+}
+#gimp-magicbox {
+    background-color:transparent;
+    border-width:0;
+    height:100%;
+    width:100%;
+    color:white;
+    outline:0;
+    font-size:.8em;
+    font-family: monospace;
+    line-height:1.25em;
+    padding-left: .4em;
+    padding-right: .4em;
+}
+
+.gimp-controls-list {
+    top:3em;
+    left:.75em;
+    height:calc(100% - 6em);
+    background-color:black;
+}
+.gimp-controls-info {
+    bottom:.75em;
+    left:.75em;
+    height:1em;
+    /*background-color:black;*/
+}
+
+
+
+.gimp-window {
+    left:20em;
+    width:calc(100% - 20em);
+    background-color:#000;
+}
+
+
+.gimp-viewer {
+
+}
+.gimp-imagebox {
+
+}
+.gimp-imagecontrols-container {
+
+}
+.gimp-imagecontrols {
+
+}
