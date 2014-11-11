@@ -1,5 +1,6 @@
 function ImageGimp() {
-    
+
+    this.self = this;
     this.isCreated = false;              // gimpCSS has been instantiated
     this.isShowing = false;              // ImageGimp panel is showing
     this.imShowing = false;              // Image is showing inside panel
@@ -16,10 +17,10 @@ function ImageGimp() {
     this.maxSize = false;                    // Maximum height and width for show all images
 
     this.widths = [
-        275,    // width of the side panel
-        10,     // general padding width
+        "20em",    // width of the side panel
+        ".75em",     // general padding width
         26,     // length of link strings
-        12,     // font-size
+        16,     // font-size
         0       // Y-offset for scroll placement
     ];
 
@@ -58,7 +59,17 @@ function ImageGimp() {
         src : false,
         pre : false
     };
+    
+    this.fileFormats = [
+        // Image formats
+        ",ani,anim,apng,art,bef,bmf,bmp,bsave,cal,cgm,cin,cpc,dpx,ecw,exr,fits,flic,fpx,gif,hdri,icer,icns,ico,cur,ics,iges,"+
+        "ilbm,jbig,jbig2,jng,jpeg,jpg,mng,miff,pbm,pcx,pgf,pgm,png,ppm,psp,qtvr,rad,rgbe,sgi,tga,tiff,wbmp,webp,xar,xbm,xcf,xpm,",
+        // Video formats
+        ",aiff,wav,xmf,fits,3gp,asf,avi,flv,f4v,iff,mkv,mj2,qt,mpeg,mpg,mp4,ogg,rm,"
+        ];
+}
 
+ImageGimp.prototype.getExtensionIms = function(){
     this.Ims = {
         loading         : chrome.extension.getURL("images/loading.gif"),
         failed          : chrome.extension.getURL("images/failed.png"),
@@ -76,14 +87,6 @@ function ImageGimp() {
         logo_128t : chrome.extension.getURL("images/full_logo_128t.png"),
         background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
     };
-    
-    this.fileFormats = [
-        // Image formats
-        ",ani,anim,apng,art,bef,bmf,bmp,bsave,cal,cgm,cin,cpc,dpx,ecw,exr,fits,flic,fpx,gif,hdri,icer,icns,ico,cur,ics,iges,"+
-        "ilbm,jbig,jbig2,jng,jpeg,jpg,mng,miff,pbm,pcx,pgf,pgm,png,ppm,psp,qtvr,rad,rgbe,sgi,tga,tiff,wbmp,webp,xar,xbm,xcf,xpm,",
-        // Video formats
-        ",aiff,wav,xmf,fits,3gp,asf,avi,flv,f4v,iff,mkv,mj2,qt,mpeg,mpg,mp4,ogg,rm,"
-        ];
 }
 
 ImageGimp.prototype.init = function() {
@@ -96,15 +99,15 @@ ImageGimp.prototype.init = function() {
         '#gimpListBox { position:fixed; top:0px; left:0px; z-index:9999999; width: '+IG.widths[0]+'px; height:0px; background:#222222; overflow:hidden; font-family: verdana, arial; }\n'+
         
         '#gimpListBoxHeader { height:20px; padding:'+IG.widths[1]+'px '+IG.widths[1]+'px 0px '+IG.widths[1]+'px ; }\n'+
-        '#gimpListBoxInput { border:#888888 1px solid !important; background:#000000 !important; color:#ffffff !important; font:normal 12px/14px verdana, arial !important; width:'+(IG.widths[0]-(IG.widths[1]*2))+'px !important; height:17px !important; padding:0px !important; margin:0px !important; }\n'+
+        '#gimp-magicbox { border:#888888 1px solid !important; background:#000000 !important; color:#ffffff !important; font:normal 12px/14px verdana, arial !important; width:'+(IG.widths[0]-(IG.widths[1]*2))+'px !important; height:17px !important; padding:0px !important; margin:0px !important; }\n'+
         
-        '#gimpListBoxContent { position:relative; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; margin:'+IG.widths[1]+'px; color:#ffffff; overflow:auto; font-size:'+IG.widths[3]+'px; }\n'+
+        '.gimp-controls-list { position:relative; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000; margin:'+IG.widths[1]+'px; color:#ffffff; overflow:auto; font-size:'+IG.widths[3]+'px; }\n'+
         '.listAnchors { cursor:pointer; padding:1px; color:#ffffff; font:normal '+IG.widths[3]+'px/14px verdana, arial !important; text-align:left !important; }\n'+
         '.IGLA { float:right; margin:1px; height:10px; width:10px; border:#222222 1px solid; }\n'+
         '.IGLAChosen { background:#113311 !important; }\n'+
         '.listAnchors:hover { background:#333333; }\n'+
 
-        '#gimpListBoxFooter { height:15px; padding:0px '+IG.widths[1]+'px '+IG.widths[1]+'px '+IG.widths[1]+'px !important; font:normal 10px/12px verdana, arial !important; color:#ffffff !important; text-align:center !important; }\n'+
+        '.gimp-controls-info { height:15px; padding:0px '+IG.widths[1]+'px '+IG.widths[1]+'px '+IG.widths[1]+'px !important; font:normal 10px/12px verdana, arial !important; color:#ffffff !important; text-align:center !important; }\n'+
                 
         '#gimpImageBox { position:fixed; top:0px; left:'+IG.widths[0]+'px; z-index:9999998; width: '+(IG.widths[0]-(IG.widths[1]*2))+'px; height:100%; background:#000000 url("'+IG.Ims.logo_128t+'") no-repeat center; ; overflow:hidden; font-size:'+IG.widths[3]+'px; font-family: verdana, arial; }\n'+
         '#gimpImageBoxUnder { position:relative; overflow:auto; height:100%; width:100%; }\n'+  
@@ -157,44 +160,63 @@ ImageGimp.prototype.init = function() {
         
         IG.clearImage();
     };
-    
+
+ImageGimp.prototype.init = function(){
+    this.isCreated = true;
+    console.log("hello");
+};
+
+
 ImageGimp.prototype.showListBox = function() {
-        if(IG.isShowing == false) {
-            window.addEventListener("resize", IG.getResize, false);
-            window.addEventListener("keydown", IG.getKeypress, false);
-            IG.isShowing = true;
-            $otherhtml = $("html").children().not(".gimpnecessary");
-            $otherhtml.each(function(index){ 
-                if($(this).css("display")!='none') { $(this).css("display","none"); $(this).data('doremove',true); } 
-                else $(this).data('doremove',false);
-            });
-            IG.fitBox();
-            $("#gimpNHTML").fadeIn("fast");     
-        }
-    };
-    
+    if(this.isShowing == false) {
+        // $(window).on("resize", this.getResize, false);
+        $(document).on("keydown", this.getKeypress);
+        this.isShowing = true;
+
+        var $otherhtml = $("html").children().not(".gimpnecessary");
+        $otherhtml.each(function(index){ 
+            if($(this).css("display")!='none') {
+                $(this).css("display","none");
+                $(this).data('doremove',true);
+            } else {
+                $(this).data('doremove',false);
+            }
+        });
+        // this.fitBox();
+        $(".gimp-container").fadeIn("fast");
+    }
+};
+
 ImageGimp.prototype.hideListBox = function() {
-        if(IG.isShowing == true) {
-            window.removeEventListener("resize", IG.getResize, false);
-            window.removeEventListener("keydown", IG.getKeypress, false);
-            IG.isShowing = false;
-            $otherhtml = $("html").children().not(".gimpnecessary");
-            $otherhtml.each(function(index){ if($(this).data('doremove')==true) $(this).css("display",""); });
-            $("#gimpNHTML").fadeOut("fast");
-        }
-    };
+    if(this.isShowing == true) {
+        // $(window).off("resize", this.getResize, false);
+        $(window).off("keydown", this.getKeypress);
+        this.isShowing = false;
+
+        var $otherhtml = $("html").children().not(".gimpnecessary");
+        $otherhtml.each(function(index){ 
+            if($(this).data('doremove')==true) {
+                $(this).css("display","");
+            }
+        });
+        $(".gimp-container").fadeOut("fast");
+    }
+};
 
 ImageGimp.prototype.writeLinkList = function(d) {
-        if(d==undefined) d = IG.gimpLinks;
+        if(d==undefined) d = this.gimpLinks;
         if(d.length==0) return;
 
-        $("#gimpListBoxContent").html("");
+        $(".gimp-controls-list").html("");
         $.each(d, function(k,v) {
-            if(v.loaded==undefined || v.loaded==true) var b = {"border-color":IG.getIGLABorder(v.gst),"background-color":IG.linkFindTypes[v.gft].cssVal};
-            else var b = {"border-color":"#FF0000","background-color":"#000000"};
-            $("#gimpListBoxContent").append(
-                $("<div class='listAnchors' id='IGLA"+k+"' title='"+IG.getAnchorTitle(k)+"'>"+IG.getNameTruncated(v.gn)+"</div>")
-                .click(function(){IG.popImage(k);})
+            if(v.loaded==undefined || v.loaded==true) {
+                var b = {"border-color":this.getIGLABorder(v.gst),"background-color":this.linkFindTypes[v.gft].cssVal};
+            } else {
+                var b = {"border-color":"#FF0000","background-color":"#000000"};
+            }
+            $(".gimp-controls-list").append(
+                $("<div class='listAnchors' id='IGLA"+k+"' title='"+this.getAnchorTitle(k)+"'>"+this.getNameTruncated(v.gn)+"</div>")
+                .click(function(){this.popImage(k);})
                 .append($("<div class='IGLA' />").css(b))
             );
         }); 
@@ -447,7 +469,7 @@ ImageGimp.prototype.setCurrentIGLA = function(num) {
         IG.I.pre = num;
         
         // this is to make sure that the current image should always be visible in the list
-        $sbi = $("#gimpListBoxContent")
+        $sbi = $(".gimp-controls-list")
         if($("#IGLA"+num).position().top>$sbi.height()-16) { 
             $sbi.scrollTop($sbi.scrollTop()+(16-($sbi.height()-$("#IGLA"+num).position().top))); } 
         else if($("#IGLA"+num).position().top < 0) { $sbi.scrollTop(16*num); }
@@ -519,7 +541,7 @@ ImageGimp.prototype.fitBox = function() {
         $("#gimpListBox")
             .width(IG.widths[0])
             .height($(window).height());
-        $("#gimpListBoxContent")
+        $(".gimp-controls-list")
             .height($(window).height()-(IG.widths[1]*2)-55);
         $("#gimpImageBox")
             .width($(document).width()-IG.widths[0])
@@ -592,7 +614,7 @@ ImageGimp.prototype.getResize = function() {
     // clear the link list and array
 ImageGimp.prototype.clearList = function() {
         IG.gimpLinks = [];
-        $("#gimpListBoxContent").text("");
+        $(".gimp-controls-list").text("");
         IG.gLog("");
     };
 
@@ -679,6 +701,7 @@ ImageGimp.prototype.leadingZeros = function(a,n) {
 
     // get localstorage value from extension
 ImageGimp.prototype.getLocalStorage = function() {
+    if(!chrome.extension) return;
         for(var a=0;a<IG.LSarray.length;a++) {
             chrome.extension.sendRequest({method: "getLocalStorage", key: IG.LSarray[a]}, function(response) {
                 IG.localStorage[response.key] = response.data;
@@ -689,7 +712,7 @@ ImageGimp.prototype.getLocalStorage = function() {
 
     // log information to the listbox footer
 ImageGimp.prototype.gLog = function(str) {
-        $("#gimpListBoxFooter").text(str);
+        $(".gimp-controls-info").text(str);
     };
 
     // dump empty links from the list
@@ -704,35 +727,34 @@ ImageGimp.prototype.linkDump = function() {
 
     // handle keypresses
 ImageGimp.prototype.getKeypress = function(e) {
-        //console.log(e.keyCode);
-        var stop=false;
-        //IG.gLog(" ("+e.keyCode+") ["+String.fromCharCode(e.keyCode)+"] {"+e.charCode+"}");
-        switch(e.keyCode) {
-            case 13: IG.addUrl(); stop=1; break;
-            case 37: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImagePrev(); stop=1; break; }
-            case 38: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageUp(); stop=1; break; }
-            case 39: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageNext(); stop=1; break; }
-            case 40: if(!$("#gimpListBoxInput").is(":focus")) { IG.setImageDown(); stop=1; break; }
-            default: $("#gimpListBoxInput").focus(); 
-        }
-        if(stop) {
-            if (e.stopPropagation) e.stopPropagation();
-            e.cancelBubble = true;
-            e.returnValue = false;
-        }
-    };
+    var stop=false;
+    //IG.gLog(" ("+e.keyCode+") ["+String.fromCharCode(e.keyCode)+"] {"+e.charCode+"}");
+    switch(e.keyCode) {
+        case 13: this.addUrl(); stop=1; break;
+        case 37: if(!$("#gimp-magicbox").is(":focus")) { this.setImagePrev(); stop=1; break; }
+        case 38: if(!$("#gimp-magicbox").is(":focus")) { this.setImageUp(); stop=1; break; }
+        case 39: if(!$("#gimp-magicbox").is(":focus")) { this.setImageNext(); stop=1; break; }
+        case 40: if(!$("#gimp-magicbox").is(":focus")) { this.setImageDown(); stop=1; break; }
+        default: $("#gimp-magicbox").focus(); 
+    }
+    if(stop) {
+        if (e.stopPropagation) e.stopPropagation();
+        e.cancelBubble = true;
+        e.returnValue = false;
+    }
+};
 
 ImageGimp.prototype.clearOIDs = function() {
-        $.each(IG.gimpLinks,function(k,v){ delete v.oid; });
-    },
+    $.each(this.gimpLinks,function(k,v){ delete v.oid; });
+};
     
     // run a string through the commandline from the listbox header
 ImageGimp.prototype.addUrl = function(e) {
-        //console.log(e);
-        var val = $("#gimpListBoxInput").val();
-        if(val == "") $("#gimpListBoxFooter").text("Command empty");
-        else { $("#gimpListBoxInput").val(""); IG.getCMD(val); }
-    };
+    //console.log(e);
+    var val = $("#gimp-magicbox").val();
+    if(val == "") $(".gimp-controls-info").text("Command empty");
+    else { $("#gimp-magicbox").val(""); this.getCMD(val); }
+};
 
 ImageGimp.prototype.getCMD = function(url) {
         // show - show the image box
@@ -983,17 +1005,22 @@ ImageGimp.prototype.getCMD = function(url) {
     };
 
 var IG = new ImageGimp();
+// IG.getExtensionIms();
 IG.getLocalStorage();
 
 
+if(chrome.extension){
+    chrome.extension.onRequest.addListener(
+        function(request, sender, sendResponse) {
+            //console.log(request.add);
+            var url = request.add;
 
-chrome.extension.onRequest.addListener(
-    function(request, sender, sendResponse) {
-        //console.log(request.add);
-        var url = request.add;
-
-        if(IG.isCreated == false) { IG.init(); }
-        
-        IG.getCMD(url);
-    }
-);
+            if(IG.isCreated == false) { IG.init(); }
+            
+            IG.getCMD(url);
+        }
+    );
+} else {
+    IG.init();
+    IG.getCMD("make all");
+}
