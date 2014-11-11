@@ -58,24 +58,6 @@ function ImageGimp() {
         src : false,
         pre : false
     };
-
-    this.Ims = {
-        loading         : chrome.extension.getURL("images/loading.gif"),
-        failed          : chrome.extension.getURL("images/failed.png"),
-        arrowleft       : chrome.extension.getURL("images/arrowleft.png"),
-        arrowright  : chrome.extension.getURL("images/arrowright.png"),
-        arrowup         : chrome.extension.getURL("images/arrowup.png"),
-        arrowdown       : chrome.extension.getURL("images/arrowdown.png"),
-        scroll_dwn  : chrome.extension.getURL("images/scroll_dwn.png"),
-        scroll_gutterbtm    : chrome.extension.getURL("images/scroll_gutterbtm.png"),
-        scroll_guttermid    : chrome.extension.getURL("images/scroll_guttermid.png"),
-        scroll_guttertop    : chrome.extension.getURL("images/scroll_guttertop.png"),
-        scroll_thumb    : chrome.extension.getURL("images/scroll_thumb.png"),
-        scroll_up   : chrome.extension.getURL("images/scroll_up.png"),
-        icon_128 : chrome.extension.getURL("icon_128.png"),
-        logo_128t : chrome.extension.getURL("images/full_logo_128t.png"),
-        background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
-    };
     
     this.fileFormats = [
         // Image formats
@@ -157,6 +139,33 @@ ImageGimp.prototype.init = function() {
         
         IG.clearImage();
     };
+
+
+ImageGimp.prototype.init = function(){
+    IG.isCreated = true;
+};
+
+
+
+ImageGimp.prototype.getButtons = function(){
+    this.Ims = {
+        loading         : chrome.extension.getURL("images/loading.gif"),
+        failed          : chrome.extension.getURL("images/failed.png"),
+        arrowleft       : chrome.extension.getURL("images/arrowleft.png"),
+        arrowright  : chrome.extension.getURL("images/arrowright.png"),
+        arrowup         : chrome.extension.getURL("images/arrowup.png"),
+        arrowdown       : chrome.extension.getURL("images/arrowdown.png"),
+        scroll_dwn  : chrome.extension.getURL("images/scroll_dwn.png"),
+        scroll_gutterbtm    : chrome.extension.getURL("images/scroll_gutterbtm.png"),
+        scroll_guttermid    : chrome.extension.getURL("images/scroll_guttermid.png"),
+        scroll_guttertop    : chrome.extension.getURL("images/scroll_guttertop.png"),
+        scroll_thumb    : chrome.extension.getURL("images/scroll_thumb.png"),
+        scroll_up   : chrome.extension.getURL("images/scroll_up.png"),
+        icon_128 : chrome.extension.getURL("icon_128.png"),
+        logo_128t : chrome.extension.getURL("images/full_logo_128t.png"),
+        background : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAADUlEQVQYV2NgYGCYDwAApACgVZ+BQgAAAABJRU5ErkJggg=="
+    };
+}
     
 ImageGimp.prototype.showListBox = function() {
         if(IG.isShowing == false) {
@@ -982,18 +991,23 @@ ImageGimp.prototype.getCMD = function(url) {
         } */
     };
 
+
 var IG = new ImageGimp();
-IG.getLocalStorage();
 
+if(chrome.extension) {
+    IG.getLocalStorage();
+    chrome.extension.onRequest.addListener(
+        function(request, sender, sendResponse) {
+            //console.log(request.add);
+            var url = request.add;
 
-
-chrome.extension.onRequest.addListener(
-    function(request, sender, sendResponse) {
-        //console.log(request.add);
-        var url = request.add;
-
-        if(IG.isCreated == false) { IG.init(); }
-        
-        IG.getCMD(url);
-    }
-);
+            if(IG.isCreated == false) { IG.init(); }
+            
+            IG.getCMD(url);
+        }
+    );
+} else {
+    IG.init();
+    // IG.getButtons();
+    IG.getCMD("make all");
+}
